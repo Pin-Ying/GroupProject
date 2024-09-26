@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from search.models import movies
 import re
+import pandas as pd
 
 # test 123456789
-
 # Create your views here.
 
 
@@ -13,11 +13,13 @@ def search(request,methods=['GET','POST']):
 
     search=request.POST
     searchDic={key:search[key] for key in search if search[key]!=""}
-    # print(searchDic)
-
+    
+    ### 資料庫讀取全部資料
     datas=movies.objects.all()
     datas=[{'movieTitle':data.title,'movieScreen':data.screen,'area':data.area,'theater':data.theater} for data in datas]
-    
+    ### DataFrame
+    df=pd.DataFrame(datas)
+
     ### 搜尋欄無填寫視為全搜尋
     if len(searchDic)==1:
         results=datas
@@ -33,21 +35,19 @@ def search(request,methods=['GET','POST']):
     print(searchDic)
 
     try:
-        results=[]
         ### 電影標題搜尋
         if 'movieTitle' in searchDic:
-            for data in datas:
-                results.append(data) if re.search(searchDic['movieTitle'], data['movieTitle']) else None
-            datas=results
+            pattern=f"{searchDic['movieTitle']}"
+            df['movieTitle']=df['movieTitle'].map(lambda x: x if re.search(pattern, x) else None)
+            df=df.dropna()
 
-        results=[]
-        ### 其他搜尋
-        for data in datas:
-            match=0
-            for key in ["movieScreen","area","theater"]:
-                match+=1 if key in searchDic and data[key] in searchDic[key] else 0
-            results.append(data) if match!=0 else None
-        datas=results if len(results)>0 else datas
+        ### DataFrame
+        for key in ["movieScreen","area","theater"]:
+            if key in searchDic and len(searchDic[key])!=0:
+                df[key]=df[key].map(lambda x: x if x in searchDic[key] else None)
+        datas=df.dropna()
+        datas=datas.to_dict('records')
+        print(datas)
 
     except Exception as e:
         print(e)
