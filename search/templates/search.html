@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form action="" method="post">
+        {% csrf_token %}
+        <label for="movieTitle">電影標題</label>
+        <input type="text" name="movieTitle" id="movieTitle">
+        <br>
+        <label for="movieScreen">選擇螢幕</label>
+        <input type="checkbox" name="Imax" id="movieScreen">Imax
+        <input type="checkbox" name="3D" id="movieScreen">3D
+        <input type="checkbox" name="digital" id="movieScreen">數位
+        <br>
+        <label for="area">地區</label>
+        <select name="area" id="area">
+            <option value=""></option>
+            <option value="area1">area1</option>
+            <option value="area2">area2</option>
+        </select>
+        <br>
+        <label for="theater">影院</label>
+        <select name="theater" id="theater">
+            <option value=""></option>
+            <option value="theater1">theater1</option>
+            <option value="theater2">theater2</option>
+        </select>
+        <br>
+        <button type="submit">查詢</button>
+
+    </form>
+    <p>
+        {{datas}}
+    </p>
+    <p>
+        {% for result in datas %}
+        電影標題: {{result.movieTitle}}
+        螢幕: {{result.movieScreen}}
+        地區: {{result.area}}
+        影院: {{result.theater}}
+        <br>
+        {% if empty %}
+        {% endif %}
+        {% endfor %}
+    </p>
+
+
+</body>
+
+</html>
