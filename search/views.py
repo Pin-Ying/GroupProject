@@ -6,9 +6,9 @@ import pandas as pd
 # test 123456789
 # Create your views here.
 
-def searchRequest(request, methods=["GET", "POST"]):
+def searchRequest(request, methods=["GET", "POST"], templatePage="searchPage.html"):
     if request.method == "GET":
-        return render(request, "search.html")
+        return render(request, templatePage)
 
     search = request.POST
     searchDic = {key: search[key] for key in search if search[key] != ""}
@@ -24,6 +24,7 @@ def searchRequest(request, methods=["GET", "POST"]):
             'movieTitle':movie.title,
             'movieScreen':movie.screen_type
         } for movie in movie_datas])
+        
         # datas = movieSearch(df=movie_df,searchDic=searchDic)
         datas = movieSearch(df=df,searchDic=searchDic)
         # 從影院資料查詢(地區、影院)
@@ -32,6 +33,8 @@ def searchRequest(request, methods=["GET", "POST"]):
 
     except Exception as e:
         print(e)
+        datas = ["error!"]
         movie_datas = ["error!"]
+    # return render(request, templatePage,{'datas':datas})
+    return render(request, templatePage,{'movies':datas,'searchDic':searchDic})
 
-    return render(request, "search.html",{'datas':datas})

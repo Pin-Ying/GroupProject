@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <title>電影院資訊</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px 20px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        header button,
+        .input-button {
+            color: #fff;
+            text-decoration: none;
+            padding: 16px 15px;
+            background-color: #0066cc;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 30px;
+        }
+
+        header .login-input {
+            flex: 0.7;
+            margin: 0 5px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        header button:nth-child(1),
+        header button:nth-child(2) {
+            flex: 2;
+        }
+
+        header button:nth-child(5) {
+            flex: 0.3;
+        }
+
+        .input-button {
+            flex: 0.5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 5px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 40%;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 20%;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 20%;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 15%;
+        }
+
+
+        select,
+        input[type="checkbox"] {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .title {
+            background-color: #333;
+            color: white;
+            font-size: 36px;
+            text-align: center;
+            padding-left: 20px;
+        }
+
+        .poster {
+            height: 200px;
+            background-color: #ccc;
+        }
+
+        .poster {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .movie-card {
+            background-color: #fff;
+            width: 30%;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: auto;
+        }
+
+        .movie-info {
+            padding: 15px;
+        }
+
+        .movie-info h3 {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+
+        .movie-info p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .poster a {
+            display: flex;
+            text-decoration: none;
+            color: inherit;
+            width: 30%;
+            margin-bottom: 20px;
+        }
+
+        .movie-card {
+            background-color: #fff;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: auto;
+        }
+
+        .movie-info {
+            padding: 15px;
+        }
+
+        /* 搜尋按鈕樣式 */
+        .search-button {
+            background-color: #0066cc !important;
+            /* 確保按鈕背景顏色為藍色 */
+            color: white !important;
+            padding: 16px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            width: 80%;
+            height: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <header
+            style="background-color: #333; color: #fff; padding: 1px 1px; text-align: center; display: flex; justify-content: space-between;">
+            <button style="flex: 1; border: none; background-color: transparent; color: white; cursor: pointer;"
+                onclick="window.location.href='2.html';">宏碁專案電影整合</button>
+        </header>
+        <header>
+            <button onclick="location.href='#'">線正熱映中</button>
+            <button onclick="location.href='#'">近期上映</button>
+            <input type="text" placeholder="帳號" class="login-input">
+            <input type="password" placeholder="密碼" class="login-input">
+            <button onclick="location.href='#'">登入</button>
+            <button onclick="window.location.href='4.html';" class="input-button">註冊</button>
+        </header>
+        <table>
+            <thead>
+                <tr>
+                    <th class="title">選擇螢幕(Imax, 3D, 數位)</th>
+                    <th class="title">地區</th>
+                    <th class="title">影院</th>
+                    <td>
+                        <input type="text" placeholder="輸入電影關鍵字" name="movieTitle"
+                            style="width: 90%; padding: 10px; font-size: 30px; border: 1px solid #ccc; border-radius: 5px;">
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="Imax" name="Imax">
+                        <label for="Imax">Imax</label>
+                        <input type="checkbox" id="3D" name="3D">
+                        <label for="3D">3D</label>
+                        <input type="checkbox" id="digital" name="數位">
+                        <label for="digital">數位</label>
+                    </td>
+                    <td>
+                        <select>
+                            <option>選擇地區</option>
+                            <option value="north">北部</option>
+                            <option value="central">中部</option>
+                            <option value="south">南部</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select>
+                            <option>選擇戲院</option>
+                            <option value="cinema1">威秀</option>
+                            <option value="cinema2">國賓</option>
+                            <option value="cinema3">美麗華</option>
+                            <option value="cinema4">秀太</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="search-button">搜尋</button>
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+        <div class="poster">
+            {% for movie in movies %}
+            <a href="movie{{ loop.index }}-detail.html">
+                <div class="movie-card">
+                    <img src="{{ movie.trailerLink }}" alt="{{ movie.0 }}">
+                    <div class="movie-info">
+                        <h3>{{ movie.movieTitle }}</h3>
+                        <p>{{ movie.電影介紹 }}</p>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </form>
+
+</body>
+
+</html>

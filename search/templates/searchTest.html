@@ -17,7 +17,7 @@
         <!-- 之後可用for迴圈生成 -->
         <input type="checkbox" name="Imax" id="movieScreen">Imax
         <input type="checkbox" name="3D" id="movieScreen">3D
-        <input type="checkbox" name="數位" id="movieScreen">數位
+        <input type="checkbox" name="digital" id="movieScreen">數位
         <br>
         <label for="area">地區</label>
         <!-- 之後可用for迴圈生成 -->
@@ -41,7 +41,7 @@
     <p>
         {% for data in datas %}
         {{data}}<br>
-        <img src="{{data.上或待上映}}" alt=""><br>
+        <img src="{{data.trailerLink}}" alt=""><br>
         {% endfor %}
     </p>
 

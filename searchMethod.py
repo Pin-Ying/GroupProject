@@ -57,12 +57,10 @@ if __name__=='__main__':
     df=pd.read_csv("movie.csv")
     df = df.rename(columns={'電影名稱': 'movieTitle','電影海報網址':'trailerLink','電影時長':'runningTime','電影螢幕':"movieScreen"})
     # searchDic={'csrfmiddlewaretoken':'模擬網頁回傳的csrf_token','movieTitle':'小丑：雙重瘋狂'}
-    # searchDic={'csrfmiddlewaretoken':'模擬網頁回傳的csrf_token','數位':'on'}
+    searchDic={'csrfmiddlewaretoken':'模擬網頁回傳的csrf_token','digital':'on'}
     # searchDic={'csrfmiddlewaretoken':'模擬網頁回傳的csrf_token','movieTitle':'小丑','數位':'on'}
-    searchDic={'csrfmiddlewaretoken':'模擬網頁回傳的csrf_token'}
-    print(len(movieSearch(df,searchDic)))
-    print(len(df))
-
+    # searchDic={'csrfmiddlewaretoken':'模擬網頁回傳的csrf_token'}
+    print(movieSearch(df,searchDic))
 
 
 
