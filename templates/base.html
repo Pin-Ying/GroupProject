@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <title>電影院資訊</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <style>
+        body {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="box center">
+        <div class="title" style="flex: 1; border: none; background-color: transparent; color: white; cursor: pointer;"
+            onclick="window.location.href='2.html';">宏碁專案電影整合</div>
+    </div>
+    <div class="columns">
+        <button class="column is-3" onclick="location.href='#'">線正熱映中</button>
+        <button class="column is-3" onclick="location.href='#'">近期上映</button>
+        <input class="column" type="text" placeholder="帳號" class="login-input">
+        <input class="column" type="password" placeholder="密碼" class="login-input">
+        <button class="column" onclick="location.href='#'">登入</button>
+        <button class="column" onclick="window.location.href='4.html';" class="input-button">註冊</button>
+    </div>
+    {% block content %}
+
+    {% endblock %}
+
+</body>
+
+</html>

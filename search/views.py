@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from search.models import movie
-from searchMethod import movieSearch
+from search.searchMethod import movieSearch
 import pandas as pd
 
 # test 123456789
