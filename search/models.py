@@ -27,7 +27,8 @@ class theater(models.Model):
 
     def __str__(self):
         return self.name
-
+    
+# 有機會可以使用Django本身有的登入方法
 class user(models.Model):
     id = models.AutoField(primary_key=True)
     account = models.CharField(max_length=100)

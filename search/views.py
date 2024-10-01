@@ -12,6 +12,7 @@ def searchRequest(request, methods=["GET", "POST"], templatePage="searchPage.htm
 
     search = request.POST
     searchDic = {key: search[key] for key in search if search[key] != ""}
+    print(searchDic)
     try:
         ### csv測試資料
         df=pd.read_csv("movie.csv")

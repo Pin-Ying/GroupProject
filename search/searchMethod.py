@@ -53,14 +53,42 @@ def movieSearch(df,searchDic,screens=["Imax", "3D", "數位"]):
         datas = [f"error!\n{e}"]
     return datas
 
+'''
+北部區域：包括臺北市、新北市、基隆市、新竹市、桃園市、新竹縣及宜蘭縣。
+中部區域：包括臺中市、苗栗縣、彰化縣、南投縣及雲林縣。
+南部區域：包括高雄市、臺南市、嘉義市、嘉義縣、屏東縣及澎湖縣。
+東部區域：包括花蓮縣及臺東縣。
+福建省：包括金門縣與連江縣。
+'''
+northArea=['臺北市','新北市','基隆市','新竹市','桃園市','新竹縣','宜蘭縣']
+centralArea=['臺中市','苗栗縣','彰化縣','南投縣','雲林縣']
+southArea=['高雄市','臺南市','嘉義市','屏東縣','澎湖縣']
+eastArea=['花蓮縣','臺東縣']
+islandsArea=['金門縣','連江縣']
+
+# area=['北部','中部','南部']
+area=['north','central','south']
+cinema=["威秀","國賓","美麗華","秀太"]
+
+
+
+
+### 預想：待功能完成，帶入movieSearch篩選的結果，在電影的datas出來時直接帶入datas
+def theater_search(datas):
+    movieloc=pd.read_csv('movie_csv/movieloc.csv')
+    for data in datas:
+
+        pass
+    
+    
 if __name__=='__main__':
-    df=pd.read_csv("movie.csv")
+    df=pd.read_csv("movie_csv/movie.csv")
     df = df.rename(columns={'電影名稱': 'movieTitle','電影海報網址':'trailerLink','電影時長':'runningTime','電影螢幕':"movieScreen"})
-    # searchDic={'csrfmiddlewaretoken':'模擬網頁回傳的csrf_token','movieTitle':'小丑：雙重瘋狂'}
-    searchDic={'csrfmiddlewaretoken':'模擬網頁回傳的csrf_token','digital':'on'}
-    # searchDic={'csrfmiddlewaretoken':'模擬網頁回傳的csrf_token','movieTitle':'小丑','數位':'on'}
-    # searchDic={'csrfmiddlewaretoken':'模擬網頁回傳的csrf_token'}
-    print(movieSearch(df,searchDic))
+    searchDic={'csrfmiddlewaretoken': '7BIruF9y3jyO8ZYGEJG44mcrehZROhif1N9Xij04WRpclO2F0wL6vVU1Yu3hwfcq', 'movieTitle': '小丑', '數位': 'on', 'area': 'north', 'cinema': '威秀'}
+    data=movieSearch(df,searchDic)
+    print(theater_search(data))
+
+    
 
 
 
