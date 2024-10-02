@@ -19,10 +19,6 @@ import re
 '''
 
 def movieSearch(df,searchDic,screens=["Imax", "3D", "數位"]):
-
-    ### 搜尋欄無填寫視為全搜尋
-    if len(searchDic) == 1:
-        return df.to_dict("records")
     
     ### 針對螢幕篩選先重新建構字典
     searchDic["movieScreen"] = []
@@ -32,6 +28,10 @@ def movieSearch(df,searchDic,screens=["Imax", "3D", "數位"]):
             searchDic.pop(screen)
     if len(searchDic["movieScreen"])==0:
         searchDic.pop("movieScreen")
+    
+    ### 搜尋欄無填寫視為全搜尋
+    if len(searchDic) == 1:
+        return df.to_dict("records"),searchDic
 
     try:
         ### 電影標題搜尋
@@ -51,7 +51,7 @@ def movieSearch(df,searchDic,screens=["Imax", "3D", "數位"]):
 
     except Exception as e:
         datas = [f"error!\n{e}"]
-    return datas
+    return datas, searchDic
 
 '''
 北部區域：包括臺北市、新北市、基隆市、新竹市、桃園市、新竹縣及宜蘭縣。
@@ -60,33 +60,63 @@ def movieSearch(df,searchDic,screens=["Imax", "3D", "數位"]):
 東部區域：包括花蓮縣及臺東縣。
 福建省：包括金門縣與連江縣。
 '''
-northArea=['臺北市','新北市','基隆市','新竹市','桃園市','新竹縣','宜蘭縣']
+northArea=['臺北市','台北市','新北市','基隆市','新竹市','桃園市','新竹縣','宜蘭縣']
 centralArea=['臺中市','苗栗縣','彰化縣','南投縣','雲林縣']
 southArea=['高雄市','臺南市','嘉義市','屏東縣','澎湖縣']
 eastArea=['花蓮縣','臺東縣']
 islandsArea=['金門縣','連江縣']
 
-# area=['北部','中部','南部']
-area=['north','central','south']
+# '北部','中部','南部'
+# 'north','central','south'
+areas={'north':northArea,'central':centralArea,'south':southArea,'east':eastArea,'islands':islandsArea}
 cinema=["威秀","國賓","美麗華","秀太"]
 
 
-
-
 ### 預想：待功能完成，帶入movieSearch篩選的結果，在電影的datas出來時直接帶入datas
-def theater_search(datas):
-    movieloc=pd.read_csv('movie_csv/movieloc.csv')
-    for data in datas:
+def theaterSearch(datas,searchDic):
 
-        pass
-    
-    
+    ### csv 測試資料
+    # 影城資料
+    movieloc=pd.read_csv('movie_csv/movieloc.csv')
+    # 影城與電影連結資料
+    movietis=pd.read_csv('movie_csv/movietisr.csv')
+
+    # 影院名稱篩影院 movieloc
+    if 'cinema' in searchDic:
+        movieloc['戲院名稱']=movieloc['戲院名稱'].map(lambda x: x if searchDic['cinema'] in x else None)
+        movieloc=movieloc.dropna(subset=['戲院名稱'])
+
+    # 地區篩影院 movieloc
+    movieloc['areaCheck']=movieloc['影城位置'].map(lambda x: x[:3])
+    # print(movieloc)
+    if 'area' in searchDic:
+        for county in areas[searchDic['area']]:
+            movieloc['areaCheck']=movieloc['areaCheck'].map(lambda x: 'Target' if county==x else x)
+        movieloc=movieloc[movieloc['areaCheck']=='Target']
+
+    # 電影 datas 對到影院名單 movietis(由 movieloc 篩選過)
+    movietis['影城']=movietis['影城'].map(lambda x: x if x in list(movieloc['影城']) else None)
+    movietis=movietis.dropna(subset=['影城'])
+    print(movietis)
+
+    for data in datas:
+        if data['movieTitle'] in movietis['電影名稱']:
+            cinemas=movietis[movietis['電影名稱']==data['movieTitle']][['影城','日期','時間','廳位席位']]
+            cinemas=cinemas.to_dict("records")
+            data['cinema']=cinemas
+        else:
+            datas.remove(data)
+    return datas
+
+
 if __name__=='__main__':
     df=pd.read_csv("movie_csv/movie.csv")
     df = df.rename(columns={'電影名稱': 'movieTitle','電影海報網址':'trailerLink','電影時長':'runningTime','電影螢幕':"movieScreen"})
-    searchDic={'csrfmiddlewaretoken': '7BIruF9y3jyO8ZYGEJG44mcrehZROhif1N9Xij04WRpclO2F0wL6vVU1Yu3hwfcq', 'movieTitle': '小丑', '數位': 'on', 'area': 'north', 'cinema': '威秀'}
-    data=movieSearch(df,searchDic)
-    print(theater_search(data))
+    # searchDic={'csrfmiddlewaretoken': '7BIruF9y3jyO8ZYGEJG44mcrehZROhif1N9Xij04WRpclO2F0wL6vVU1Yu3hwfcq', 'movieTitle': '小丑', '數位': 'on', 'area': 'north', 'cinema': '國賓'}
+    # searchDic={'csrfmiddlewaretoken': '7BIruF9y3jyO8ZYGEJG44mcrehZROhif1N9Xij04WRpclO2F0wL6vVU1Yu3hwfcq'}
+    searchDic={'csrfmiddlewaretoken': 'pPxS6lRVtGmm02JZex09jKZ81hxIcNZgj1YoUZIrmedKdRNYAk5bKjHILuB8ULTr', 'cinema': '威秀'}
+    data,searchDic=movieSearch(df,searchDic)
+    print(theaterSearch(data,searchDic))
 
     
 
