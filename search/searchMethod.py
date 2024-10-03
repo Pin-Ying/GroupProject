@@ -74,47 +74,53 @@ cinema=["威秀","國賓","美麗華","秀太"]
 
 ### 預想：待功能完成，帶入movieSearch篩選的結果，在電影的datas出來時直接帶入datas
 def theaterSearch(datas,searchDic):
-
+    print(datas)
+    if 'cinema' not in searchDic and 'area' not in searchDic:
+        return datas
     ### csv 測試資料
     # 影城資料
     movieloc=pd.read_csv('movie_csv/movieloc.csv')
     # 影城與電影連結資料
-    movietis=pd.read_csv('movie_csv/movietisr.csv')
+    movietisr=pd.read_csv('movie_csv/movietisr.csv')
 
     # 影院名稱篩影院 movieloc
     if 'cinema' in searchDic:
         movieloc['戲院名稱']=movieloc['戲院名稱'].map(lambda x: x if searchDic['cinema'] in x else None)
         movieloc=movieloc.dropna(subset=['戲院名稱'])
+    
+    print('影院名稱篩影院',movieloc)
 
     # 地區篩影院 movieloc
     movieloc['areaCheck']=movieloc['影城位置'].map(lambda x: x[:3])
-    # print(movieloc)
     if 'area' in searchDic:
         for county in areas[searchDic['area']]:
             movieloc['areaCheck']=movieloc['areaCheck'].map(lambda x: 'Target' if county==x else x)
         movieloc=movieloc[movieloc['areaCheck']=='Target']
+    
+    print('影院地區篩影院',movieloc)
 
     # 電影 datas 對到影院名單 movietis(由 movieloc 篩選過)
-    movietis['影城']=movietis['影城'].map(lambda x: x if x in list(movieloc['影城']) else None)
-    movietis=movietis.dropna(subset=['影城'])
-    print(movietis)
+    movietisr['影城']=movietisr['影城'].map(lambda x: x if x in list(movieloc['影城']) else None)
+    movietisr=movietisr.dropna(subset=['影城'])
 
+    results=[]
     for data in datas:
-        if data['movieTitle'] in movietis['電影名稱']:
-            cinemas=movietis[movietis['電影名稱']==data['movieTitle']][['影城','日期','時間','廳位席位']]
+        movieSet=set(movietisr['電影名稱'])
+        if data['movieTitle'] in movieSet:
+            cinemas=movietisr[movietisr['電影名稱']==data['movieTitle']][['影城','日期','時間','廳位席位']]
             cinemas=cinemas.to_dict("records")
             data['cinema']=cinemas
-        else:
-            datas.remove(data)
-    return datas
+            results.append(data)
+
+    return results
 
 
 if __name__=='__main__':
     df=pd.read_csv("movie_csv/movie.csv")
     df = df.rename(columns={'電影名稱': 'movieTitle','電影海報網址':'trailerLink','電影時長':'runningTime','電影螢幕':"movieScreen"})
-    # searchDic={'csrfmiddlewaretoken': '7BIruF9y3jyO8ZYGEJG44mcrehZROhif1N9Xij04WRpclO2F0wL6vVU1Yu3hwfcq', 'movieTitle': '小丑', '數位': 'on', 'area': 'north', 'cinema': '國賓'}
+    searchDic={'csrfmiddlewaretoken': '7BIruF9y3jyO8ZYGEJG44mcrehZROhif1N9Xij04WRpclO2F0wL6vVU1Yu3hwfcq', 'movieTitle': '小丑', '數位': 'on', 'area': 'north', 'cinema': '國賓'}
     # searchDic={'csrfmiddlewaretoken': '7BIruF9y3jyO8ZYGEJG44mcrehZROhif1N9Xij04WRpclO2F0wL6vVU1Yu3hwfcq'}
-    searchDic={'csrfmiddlewaretoken': 'pPxS6lRVtGmm02JZex09jKZ81hxIcNZgj1YoUZIrmedKdRNYAk5bKjHILuB8ULTr', 'cinema': '威秀'}
+    # searchDic={'csrfmiddlewaretoken': 'pPxS6lRVtGmm02JZex09jKZ81hxIcNZgj1YoUZIrmedKdRNYAk5bKjHILuB8ULTr', 'cinema': '威秀'}
     data,searchDic=movieSearch(df,searchDic)
     print(theaterSearch(data,searchDic))
 
