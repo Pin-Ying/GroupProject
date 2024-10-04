@@ -51,15 +51,18 @@
     <div class="poster columns is-multiline">
         {% for movie in movies %}
         <div class="column is-4">
-            <a href="movie{{ loop.index }}-detail.html">
-                <div class="movie-card">
-                    <img src="{{ movie.trailerLink }}" alt="尚無照片...">
-                    <div class="movie-info">
-                        <h3>{{ movie.movieTitle }}</h3>
-                        <p>{{ movie.電影介紹 }}</p>
-                    </div>
+            <div class="movie-card">
+                <img src="{{ movie.trailerLink }}" alt="尚無照片...">
+                <div class="movie-info">
+                    <h3>{{ movie.movieTitle }}</h3>
+                    <p>{{ movie.電影介紹 }}</p>
+                    <select id="theater" name="theater">
+                        {% for theater in movie.theaters %}
+                        <option value="{{ theater }}">{{ theater }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-            </a>
+            </div>
         </div>
         {% endfor %}
     </div>
