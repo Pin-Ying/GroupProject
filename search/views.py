@@ -7,7 +7,7 @@ import pandas as pd
 # Create your views here.
 
 
-def searchRequest(request, methods=["GET", "POST"], templatePage="searchPage.html"):
+def searchRequest(request, methods=["GET", "POST"], templatePage="search/searchPage.html"):
     if request.method == "GET":
         return render(request, templatePage)
 

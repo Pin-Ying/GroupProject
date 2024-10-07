@@ -69,6 +69,6 @@ def user_register(request):
                 user.save()
                 msg = "註冊成功"
                 request.session["username"] = user.username
-                return redirect("search-index")
+                return redirect("search_index")
 
     return render(request, "user/register.html", {"form": form, "msg": msg})

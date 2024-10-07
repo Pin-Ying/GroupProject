@@ -9,6 +9,12 @@
         body {
             text-align: center;
         }
+
+        .column {
+            height: auto;
+            margin: 5px;
+            padding: 5px;
+        }
     </style>
     {% block style %}
     {% endblock %}
@@ -33,9 +39,10 @@
             <input type="text" class="column" name="username" id="id-username" value="{{username}}" placeholder="帳號">
             <input type="password" class="column" name="password" id="id-password" placeholder="密碼">
             <input type="submit" class="button column" name="login" id="" value="登入">
-            <a class="button column" href="{% url 'register' %}">註冊</a>
         </form>
+        <a class="button column is-1" href="{% url 'register' %}">註冊</a>
         {% endif %}
+        <a class="button column is-1" href="{% url 'search_index' %}">回首頁</a>
     </div>
     <div>{{msg}}</div>
     {% block content %}
