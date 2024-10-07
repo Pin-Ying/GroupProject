@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>PROFILE</h1>
+{% if user.is_authenticated %}
+<ul>
+
+    <li>Email: {{user.email}}</li>
+    <li>SuperUser:
+        {% if user.is_superuser %}
+        Yes!
+        {% else %}
+        No...
+        {% endif %}
+    </li>
+    <li>DateJoined: {{user.date_joined}}</li>
+
+</ul>
+{% else %}
+<h2 style="color: red;">Please Login or Register First</h2>
+{% endif %}
+
+{% endblock %}

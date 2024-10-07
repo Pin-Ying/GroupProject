@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from search.models import movie
 from search.searchMethod import movieSearch, theaterSearch
 import pandas as pd

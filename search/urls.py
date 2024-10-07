@@ -19,5 +19,5 @@ from . import views
 from django.urls import path
 
 urlpatterns = [
-    path("", views.searchRequest),
+    path("", views.searchRequest, name="search_index"),
 ]

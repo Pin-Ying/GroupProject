@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block style %}
+<style>
+    .register-form {
+        display: inline-block;
+        text-align: left;
+        margin: 5px;
+        padding: 5px;
+    }
+
+    p {
+        margin: 5px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<h1>註冊頁面</h1>
+<div class="register-form">
+    <!-- <form action="." method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button class="button" type="submit">提交</button>
+    </form> -->
+    <form action="." method="POST">
+        {% csrf_token %}
+        <p>
+            <label for="id_username">使用者名稱：</label>
+            <input type="text" name="username" maxlength="150" autocapitalize="none" autocomplete="username"
+                autofocus="" required="" aria-describedby="id_username_helptext" id="id_username">
+
+            <!-- <span class="helptext" id="id_username_helptext">必填。長度為150個字或以下，僅限字母、數字和 @/./+/-/_。</span> -->
+
+
+        </p>
+
+
+        <p>
+            <label for="id_password1">密碼：</label>
+            <input type="password" name="password1" autocomplete="new-password" aria-describedby="id_password1_helptext"
+                id="id_password1">
+
+            <span class="helptext" id="id_password1_helptext"></span>
+        </p>
+        <!-- <ul>
+            <li>你的密碼不能與其他個人資訊太相近。</li>
+            <li>你的密碼必須包含至少 8 個字元。</li>
+            <li>你不能使用常見的密碼。</li>
+            <li>你的密碼不能全都是數字。</li>
+        </ul> -->
+        <p></p>
+
+        <p>
+            <label for="id_password2">密碼確認：</label>
+            <input type="password" name="password2" autocomplete="new-password" aria-describedby="id_password2_helptext"
+                id="id_password2">
+
+            <!-- <span class="helptext" id="id_password2_helptext">輸入與之前相同的密碼以進行驗證。</span> -->
+
+
+        </p>
+
+        <!-- <p>
+            <label>基於密碼的驗證：</label>
+        </p>
+        <div id="id_usable_password" class="radiolist inline">
+            <div>
+                <label for="id_usable_password_0"><input type="radio" name="usable_password" value="true"
+                        class="radiolist inline" id="id_usable_password_0" checked="">
+                    啟用</label>
+    
+            </div>
+            <div>
+                <label for="id_usable_password_1"><input type="radio" name="usable_password" value="false"
+                        class="radiolist inline" id="id_usable_password_1">
+                    停用</label>
+    
+            </div>
+        </div>
+    
+        <span class="helptext" id="id_usable_password_helptext">用戶是否能夠使用密碼進行認證。如果禁用，他們仍可能能夠使用其他後端進行認證，例如單一登入或LDAP。</span> -->
+
+        <p></p>
+        <button class="button" type="submit">提交</button>
+    </form>
+</div>
+{% endblock %}
