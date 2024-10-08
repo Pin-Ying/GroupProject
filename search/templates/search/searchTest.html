@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form action="" method="post">
+        {% csrf_token %}
+        <label for="movieTitle">電影標題</label>
+        <input type="text" name="movieTitle" id="movieTitle">
+        <br>
+        <label for="movieScreen">選擇螢幕</label>
+        <!-- 之後可用for迴圈生成 -->
+        <input type="checkbox" name="Imax" id="movieScreen">Imax
+        <input type="checkbox" name="3D" id="movieScreen">3D
+        <input type="checkbox" name="digital" id="movieScreen">數位
+        <br>
+        <label for="area">地區</label>
+        <!-- 之後可用for迴圈生成 -->
+        <select name="area" id="area">
+            <option value=""></option>
+            <option value="area1">area1</option>
+            <option value="area2">area2</option>
+        </select>
+        <br>
+        <label for="theater">影院</label>
+        <!-- 之後可用for迴圈生成 -->
+        <select name="theater" id="theater">
+            <option value=""></option>
+            <option value="theater1">theater1</option>
+            <option value="theater2">theater2</option>
+        </select>
+        <br>
+        <button type="submit">查詢</button>
+
+    </form>
+    <p>
+        {% for data in datas %}
+        {{data}}<br>
+        <img src="{{data.trailerLink}}" alt=""><br>
+        {% endfor %}
+    </p>
+
+</body>
+
+</html>
