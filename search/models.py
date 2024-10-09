@@ -9,6 +9,7 @@ class movie(models.Model):
     title = models.CharField(max_length=100,unique=True)
     img_src = models.CharField(max_length=100, blank=True, null=True)
     trailer_link=models.CharField(max_length=100, blank=True, null=True)
+    movie_type=models.CharField(max_length=100, blank=True, null=True)
     main_actor=models.CharField(max_length=100, blank=True, null=True)
     info = models.CharField(max_length=100, blank=True, null=True)
     release_date = models.DateField(max_length=100, blank=True, null=True)
@@ -21,8 +22,9 @@ class movie(models.Model):
 class theater(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100,unique=True)
+    cinema=models.CharField(max_length=100,blank=True, null=True)
     address=models.CharField(max_length=100,blank=True, null=True)
-    phone=models.IntegerField(null=True,blank=True)
+    phone=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
         return self.name
 
@@ -35,7 +37,7 @@ class showTimeInfo(models.Model):
     site=models.CharField(max_length=100,blank=True, null=True)
     
     def __str__(self):
-        return self.movieTitle,self.theaterName
+        return f"{self.movie.title}/{self.theater.name}/{self.date}"
     
 # # 有機會可以使用Django本身有的登入方法
 # class user(models.Model):
