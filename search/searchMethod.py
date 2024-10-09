@@ -1,3 +1,5 @@
+from search.models import theater,showTimeInfo
+from django.forms.models import model_to_dict
 import pandas as pd
 import re
 
@@ -38,20 +40,19 @@ def movieSearch(df, searchDic, screens=["Imax", "3D", "數位"]):
         ### 電影標題搜尋
         if "movieTitle" in searchDic:
             pattern = f"{searchDic['movieTitle']}"
-            df["movieTitle"] = df["movieTitle"].map(
+            df["title"] = df["title"].map(
                 lambda x: x if re.search(pattern, x) else None
             )
-            df = df.dropna(subset=["movieTitle"])
+            df = df.dropna(subset=["title"])
 
         ### 電影螢幕搜尋
         if "movieScreen" in searchDic:
-            df["movieScreen"] = df["movieScreen"].map(
+            df["screen_type"] = df["screen_type"].map(
                 lambda x: x if x in searchDic["movieScreen"] else None
             )
-            df = df.dropna(subset=["movieScreen"])
+            df = df.dropna(subset=["screen_type"])
 
         datas = df.to_dict("records")
-
     except Exception as e:
         datas = [f"error!\n{e}"]
     return datas, searchDic
@@ -93,24 +94,30 @@ cinema = ["威秀", "國賓", "美麗華", "秀太"]
 
 ### 預想：待功能完成，帶入movieSearch篩選的結果，在電影的datas出來時直接帶入datas
 def theaterSearch(datas, searchDic):
-    # print(datas)
-    ### csv 測試資料
+
     # 影城資料
-    movieloc = pd.read_csv("movie_csv/movieloc.csv")
+    theater_datas = theater.objects.all()
+    movieloc=pd.DataFrame([
+                model_to_dict(theater)
+                for theater in theater_datas
+            ])
+
     # 影城與電影連結資料
-    movietisr = pd.read_csv("movie_csv/movietisr.csv")
+    show_datas = showTimeInfo.objects.all()
+    movietisr=pd.DataFrame([
+                model_to_dict(show)
+                for show in show_datas
+            ])
 
     # 影院名稱篩影院 movieloc
     if "cinema" in searchDic:
-        movieloc["戲院名稱"] = movieloc["戲院名稱"].map(
+        movieloc["cinema"] = movieloc["cinema"].map(
             lambda x: x if searchDic["cinema"] in x else None
         )
-        movieloc = movieloc.dropna(subset=["戲院名稱"])
-
-    # print("影院名稱篩影院", movieloc)
+        movieloc = movieloc.dropna(subset=["cinema"])
 
     # 地區篩影院 movieloc
-    movieloc["areaCheck"] = movieloc["影城位置"].map(lambda x: x[:3])
+    movieloc["areaCheck"] = movieloc["address"].map(lambda x: x[:3])
     if "area" in searchDic:
         for county in areas[searchDic["area"]]:
             movieloc["areaCheck"] = movieloc["areaCheck"].map(
@@ -118,39 +125,29 @@ def theaterSearch(datas, searchDic):
             )
         movieloc = movieloc[movieloc["areaCheck"] == "Target"]
 
-    # print("影院地區篩影院", movieloc)
-
     # 電影 datas 對到影院名單 movietis(由 movieloc 篩選過)
-    movietisr["影城"] = movietisr["影城"].map(
-        lambda x: x if x in list(movieloc["影城"]) else None
+    movietisr["theater"] = movietisr["theater"].map(
+        lambda x: theater_datas.get(id=x).name if x in list(movieloc["id"]) else None
     )
-    movietisr = movietisr.dropna(subset=["影城"])
+    movietisr = movietisr.dropna(subset=["theater"])
 
     results = []
     for data in datas:
-        movieSet = set(movietisr["電影名稱"])
-        if data["movieTitle"] in movieSet:
-            cinemas = movietisr[movietisr["電影名稱"] == data["movieTitle"]][
-                ["影城", "日期", "時間", "廳位席位"]
+        movieSet = set(movietisr["movie"])
+        if data["id"] in movieSet:
+            cinemas = movietisr[movietisr["movie"] == data["id"]][
+                ["theater", "date", "time", "site"]
             ]
-            data["theaters"] = list(set(cinemas["影城"]))
+            data["theaters"] = list(set(cinemas["theater"]))
             cinemas = cinemas.to_dict("records")
             data["cinema"] = cinemas
             results.append(data)
+    # print(results)
 
     return results
 
 
 if __name__ == "__main__":
-    df = pd.read_csv("movie_csv/movie.csv")
-    df = df.rename(
-        columns={
-            "電影名稱": "movieTitle",
-            "電影海報網址": "trailerLink",
-            "電影時長": "runningTime",
-            "電影螢幕": "movieScreen",
-        }
-    )
     searchDic = {
         "csrfmiddlewaretoken": "7BIruF9y3jyO8ZYGEJG44mcrehZROhif1N9Xij04WRpclO2F0wL6vVU1Yu3hwfcq",
         "movieTitle": "小丑",
@@ -162,6 +159,3 @@ if __name__ == "__main__":
     #     "csrfmiddlewaretoken": "7BIruF9y3jyO8ZYGEJG44mcrehZROhif1N9Xij04WRpclO2F0wL6vVU1Yu3hwfcq"
     # }
     # searchDic={'csrfmiddlewaretoken': 'pPxS6lRVtGmm02JZex09jKZ81hxIcNZgj1YoUZIrmedKdRNYAk5bKjHILuB8ULTr', 'cinema': '威秀'}
-    data, searchDic = movieSearch(df, searchDic)
-    print(theaterSearch(data, searchDic))
-    print(len(data), len(theaterSearch(data, searchDic)))

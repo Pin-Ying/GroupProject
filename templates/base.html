@@ -10,13 +10,17 @@
             text-align: center;
         }
 
+        .columns {
+            margin: 5px;
+        }
+
         .column {
             height: auto;
-            margin: 5px;
-            padding: 5px;
         }
     </style>
     {% block style %}
+    {% endblock %}
+    {% block script %}
     {% endblock %}
 </head>
 
@@ -26,23 +30,22 @@
         <div class="title" style="flex: 1; border: none; background-color: transparent; color: white; cursor: pointer;"
             onclick="window.location.href='2.html';">宏碁專案電影整合</div>
     </div>
-    <div class="columns">
-        <button class="column is-3" onclick="location.href='#'">線正熱映中</button>
-        <button class="column is-3" onclick="location.href='#'">近期上映</button>
+    <div class="columns is-vcentered">
+        <a class="column button is-medium" href="{% url 'search_index' %}">搜尋電影</a>
+        <a class="column button is-medium" href="location.href='#'">劇院資料</a>
 
         {% if user.is_authenticated %}
         <a class="column" href="{% url 'profile' %}"><span class="username">使用者: {{user.username}}</span></a>
         <a class="button column" href="{% url 'logout' %}">登出</a>
         {% else %}
+        <a class="button is-medium column" href="{% url 'register' %}">註冊</a>
         <form class="login-form column columns" action="{% url 'login' %}" method="post">
             {% csrf_token %}
             <input type="text" class="column" name="username" id="id-username" value="{{username}}" placeholder="帳號">
             <input type="password" class="column" name="password" id="id-password" placeholder="密碼">
-            <input type="submit" class="button column" name="login" id="" value="登入">
+            <input type="submit" class="column button is-medium" name="login" id="" value="登入">
         </form>
-        <a class="button column is-1" href="{% url 'register' %}">註冊</a>
         {% endif %}
-        <a class="button column is-1" href="{% url 'search_index' %}">回首頁</a>
     </div>
     <div>{{msg}}</div>
     {% block content %}

@@ -1,38 +1,56 @@
 {% extends 'base.html' %}
+{% block style %}
+<style>
+    .poster {
+        border-radius: 5px;
+    }
+
+    .movie-img {
+        height: 500px;
+    }
+</style>
+{% endblock %}
+{% block script %}
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+{% endblock %}
 {% block content %}
 <form action="" method="post">
     {% csrf_token %}
-    <table class="table" style="width:100%;">
-        <thead>
+    <div class="columns" id="search-area">
+        <!-- <thead>
             <tr>
-                <th class="title">選擇螢幕(Imax, 3D, 數位)</th>
-                <th class="title">地區</th>
-                <th class="title">影院</th>
+ 
                 <td>
                     <input class="input" type="text" placeholder="輸入電影關鍵字" name="movieTitle"
                         style="width: 90%; padding: 10px; font-size: 30px; border: 1px solid #ccc; border-radius: 5px;">
                 </td>
             </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <input type="checkbox" id="Imax" name="Imax">
-                    <label for="Imax">Imax</label>
-                    <input type="checkbox" id="3D" name="3D">
-                    <label for="3D">3D</label>
-                    <input type="checkbox" id="digital" name="數位">
-                    <label for="digital">數位</label>
-                </td>
-                <td>
+        </thead> -->
+
+        <div class="column is-5">
+            <div class="title">選擇螢幕(Imax, 3D, 數位)</div>
+            <input type="checkbox" id="Imax" name="Imax">
+            <label for="Imax">Imax</label>
+            <input type="checkbox" id="3D" name="3D">
+            <label for="3D">3D</label>
+            <input type="checkbox" id="digital" name="數位">
+            <label for="digital">數位</label>
+        </div>
+        <div class="column">
+            <div class="control">
+                <div class="select">
                     <select id="area" name="area">
                         <option value="">選擇地區</option>
                         <option value="north">北部</option>
                         <option value="central">中部</option>
                         <option value="south">南部</option>
                     </select>
-                </td>
-                <td>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="control">
+                <div class="select">
                     <select id="cinema" name="cinema">
                         <option value="">選擇戲院</option>
                         <option value="威秀">威秀</option>
@@ -40,31 +58,48 @@
                         <option value="美麗華">美麗華</option>
                         <option value="秀太">秀太</option>
                     </select>
-                </td>
-                <td>
-                    <button class="button">搜尋</button>
-                </td>
-            </tr>
-        </tbody>
+                </div>
+            </div>
+        </div>
 
-    </table>
+        <div class="column is-5 field has-addons">
+            <div class="control">
+                <input class="input is-medium " type="text" placeholder="輸入電影關鍵字" name="movieTitle">
+            </div>
+            <div class="control">
+                <button class="button is-medium is-info">搜尋</button>
+            </div>
+        </div>
+
+    </div>
     <div class="poster columns is-multiline">
         {% for movie in movies %}
-        <div class="column is-one-third">
-            <div class="movie-card">
-                <img src="{{ movie.trailerLink }}" alt="尚無照片...">
-                <div class="movie-info">
-                    <h3>{{ movie.movieTitle }}</h3>
-                    <p>{{ movie.電影介紹 }}</p>
-                    <select id="theater" name="theater">
-                        {% for theater in movie.theaters %}
-                        <option value="{{ theater }}">{{ theater }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+        <div class="column is-4">
+            <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
+            <div class="movie-info">
+                <p class="title is-4">{{ movie.title }}</p>
+                <p class="content">{{ movie.info }}</p>
+                <select id="theater" name="theater">
+                    {% for theater in movie.theaters %}
+                    <option value="{{ theater }}">{{ theater }}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
         {% endfor %}
     </div>
 </form>
+
+<script>
+    $(function () {
+        var len = 200; // 超過字數以"..."取代
+        $(".content").each(function (i) {
+            if ($(this).text().length > len) {
+                $(this).attr("title", $(this).text());
+                var text = $(this).text().substring(0, len - 1) + "...";
+                $(this).text(text);
+            }
+        });
+    });
+</script>
 {% endblock %}
