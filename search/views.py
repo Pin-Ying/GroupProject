@@ -3,7 +3,7 @@ from django.forms.models import model_to_dict
 from search.models import movie
 from search.searchMethod import movieSearch, theaterSearch
 import pandas as pd
-from .dataCrawl import miramar
+from .dataCrawl import miramar,ambassador
 from . import dbUpdate
 from django.http import HttpResponse
 # test 123456789
@@ -11,10 +11,28 @@ from django.http import HttpResponse
 
 def UpdateMovies(request):
     ### 美麗華
+    # 電影
     df=miramar.get_movie()
     datas=df.to_dict("records")
     for data in datas:
         dbUpdate.movieUpdate(data)
+    
+    # 電影場次
+    df=miramar.get_showTimeInfo()
+    datas=df.to_dict("records")
+    for data in datas:
+        dbUpdate.showUpdate(data)
+    
+    ### 國賓
+    df1,df2=ambassador.get_movie_and_show()
+    datas=df1.to_dict("records")
+    for data in datas:
+        dbUpdate.movieUpdate(data)
+    datas=df2.to_dict("records")
+    for data in datas:
+        dbUpdate.showUpdate(data)
+
+
     return HttpResponse('finish!')
 
 def UpdateTheater(request):
@@ -23,14 +41,13 @@ def UpdateTheater(request):
     datas=df.to_dict("records")
     for data in datas:
         dbUpdate.theaterUpdate(data)
-    return HttpResponse('finish!')
-
-def UpdateShow(request):
-    ### 美麗華
-    df=miramar.get_showTimeInfo()
+    
+    ### 國賓
+    df=ambassador.get_theater()
     datas=df.to_dict("records")
     for data in datas:
-        dbUpdate.showUpdate(data)
+        dbUpdate.theaterUpdate(data)
+
     return HttpResponse('finish!')
 
 

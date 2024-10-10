@@ -141,6 +141,7 @@ def get_showTimeInfo():
                 # 從 id 中獲取電影編號和日期（去掉 'a_' 前綴）
                 session_id = date['id'].split('_')[1]
                 full_date = date['id'].split('_')[2]  # 例如: 10月11日
+                full_date=[date.replace('/','-') for date in full_date]
                 
                 
                 # 查找對應的場次區塊
