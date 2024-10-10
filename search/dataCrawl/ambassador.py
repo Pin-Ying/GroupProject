@@ -13,6 +13,7 @@ movietisr=[]
 posturl=[]
 
 def get_one_movie(url):
+    global finall,movietisr
     soups=get_soup(url)
     title = soups.select('div.cell.small-12.medium-12.large-12.movie-info-box>h2')[0].text
     posturl=soups.select('div>img')[0].get('src')
@@ -61,6 +62,8 @@ def get_one_movie(url):
             
             for time,seat in zip(times,seats):
                 show_infos.append([title,lcmove,date,time.text.strip(),seat.text])
+    finall.append(movie_datas)
+    movietisr.extend(show_infos)
 
     return movie_datas,show_infos
 
@@ -68,14 +71,18 @@ def get_one_movie(url):
 def get_movie_and_show():
     soup=get_soup('https://www.ambassador.com.tw/home/MovieList?Type=0')
     urls=soup.select("div.cell>a.poster")
+    threads=[]
     for a in urls:
         url="https://www.ambassador.com.tw"+a.get('href')
-        movie_datas,show_infos=get_one_movie(url)
-        finall.append(movie_datas)
-        movietisr.extend(show_infos)
+        crawl_thread=threading.Thread(target=get_one_movie,args=(url,))
+        crawl_thread.start()
+        threads.append(crawl_thread)
+    for thread in threads:
+        thread.join()
+        print(thread,'finish')
+
     movie_datas=pd.DataFrame(finall,columns=["電影名稱", "電影海報網址", "上或待上映","電影預告網址","影片類型","主要演員","電影介紹","電影時長","電影螢幕"])
     movie_datas=pd.DataFrame(movietisr,columns=["電影名稱","影城","日期","時間", "廳位席位"])
-
     return movie_datas,movie_datas
     
 
