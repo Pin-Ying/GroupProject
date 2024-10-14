@@ -21,11 +21,11 @@ def get_one_movie(url):
     # 電影介紹
     sj=sjcotyday[0].text
     # 主要演員
-    cost=sjcotyday[1].text.replace("主要演員：","") if sjcotyday[1].text.replace("主要演員：","") else "null"
+    cost=sjcotyday[1].text.replace("主要演員：","") if sjcotyday[1] else "null"
     # 影片類型
-    types=sjcotyday[2].text.replace("影片類型：","") if sjcotyday[2].text.replace("影片類型：","") else "null"
+    types=sjcotyday[2].text.replace("影片類型：","") if sjcotyday[2] else "null"
     # 上映日期
-    upday=sjcotyday[3].text.replace("上映日期：","").replace("/","-") if sjcotyday[3].text.replace("上映日期：","") else "null"
+    upday=sjcotyday[3].text.strip("上映日期：").replace("/","-") if sjcotyday[3] else "null"
     time=soups.select('div.rating-box>span')
     # 電影時間
     if len(time) > 1:
@@ -52,8 +52,8 @@ def get_one_movie(url):
     mourl=soups.select('section>div>div>div>ul>li>ul>li>a')
     #https://www.ambassador.com.tw/
     for items in mourl:
-        dates=items.get('href').split("DT=")[1]
-        dates=[date.replace('/','-') for date in dates]
+        date=items.get('href').split("DT=")[1]
+        date=date.replace('/','-')
         urls="https://www.ambassador.com.tw"+items.get('href')
         soups=get_soup(urls)
         for item in soups.select('div.theater-box'):
@@ -62,7 +62,7 @@ def get_one_movie(url):
             seats=item.select("p>span.float-left.info")
             
             for time,seat in zip(times,seats):
-                show_infos.append([title,lcmove,dates,time.text.strip(),seat.text])
+                show_infos.append([title,lcmove,date,time.text.strip(),seat.text])
     finall.append(movie_datas)
     movietisr.extend(show_infos)
 
@@ -70,7 +70,8 @@ def get_one_movie(url):
 
 
 def get_movie_and_show():
-    soup=get_soup('https://www.ambassador.com.tw/home/MovieList?Type=0')
+    # soup=get_soup('https://www.ambassador.com.tw/home/MovieList?Type=0')
+    soup=get_soup('https://www.ambassador.com.tw/home/MovieList')
     urls=soup.select("div.cell>a.poster")
     threads=[]
     for a in urls:
