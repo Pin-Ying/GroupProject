@@ -17,20 +17,20 @@ def UpdateMovies(request):
     for data in datas:
         dbUpdate.movieUpdate(data)
     
-    # # 電影場次
-    # df=miramar.get_showTimeInfo()
-    # datas=df.to_dict("records")
-    # for data in datas:
-    #     dbUpdate.showUpdate(data)
+    # 電影場次
+    df=miramar.get_showTimeInfo()
+    datas=df.to_dict("records")
+    for data in datas:
+        dbUpdate.showUpdate(data)
     
-    # ### 國賓
-    # df1,df2=ambassador.get_movie_and_show()
-    # datas=df1.to_dict("records")
-    # for data in datas:
-    #     dbUpdate.movieUpdate(data)
-    # datas=df2.to_dict("records")
-    # for data in datas:
-    #     dbUpdate.showUpdate(data)
+    ### 國賓
+    df1,df2=ambassador.get_movie_and_show()
+    datas=df1.to_dict("records")
+    for data in datas:
+        dbUpdate.movieUpdate(data)
+    datas=df2.to_dict("records")
+    for data in datas:
+        dbUpdate.showUpdate(data)
 
 
     return HttpResponse('finish!')
@@ -97,5 +97,22 @@ def movieInfo(request,movieID):
         data["theater"]=theater_data[data["theater"]]
     print(movie_data,show_data)
     return render(request,"moviePage.html",{"movie":movie_data,"showInfo":show_data})
+
+def test(request):
+    ### 美麗華
+    # 電影
+    test1=miramar.get_movie()
+    test1=test1.to_dict("records")
+    
+    # 電影場次
+    test2=miramar.get_showTimeInfo()
+    test2=test2.to_dict("records")
+
+    ### 國賓
+    test3,test4=ambassador.get_movie_and_show()
+    test3,test4=test3.to_dict("records"),test4.to_dict("records")
+    return render(request,"search/searchTest.html",locals())
+
+
 
 

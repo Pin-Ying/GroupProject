@@ -1,50 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    <div>測試爬蟲可不可以發佈，此搜尋表單目前沒有作用</div>
+    <label for="movieTitle">電影標題</label>
+    <input type="text" name="movieTitle" id="movieTitle">
+    <br>
+    <label for="movieScreen">選擇螢幕</label>
 
-<body>
-    <form action="" method="post">
-        {% csrf_token %}
-        <label for="movieTitle">電影標題</label>
-        <input type="text" name="movieTitle" id="movieTitle">
-        <br>
-        <label for="movieScreen">選擇螢幕</label>
-        <!-- 之後可用for迴圈生成 -->
-        <input type="checkbox" name="Imax" id="movieScreen">Imax
-        <input type="checkbox" name="3D" id="movieScreen">3D
-        <input type="checkbox" name="digital" id="movieScreen">數位
-        <br>
-        <label for="area">地區</label>
-        <!-- 之後可用for迴圈生成 -->
-        <select name="area" id="area">
-            <option value=""></option>
-            <option value="area1">area1</option>
-            <option value="area2">area2</option>
-        </select>
-        <br>
-        <label for="theater">影院</label>
-        <!-- 之後可用for迴圈生成 -->
-        <select name="theater" id="theater">
-            <option value=""></option>
-            <option value="theater1">theater1</option>
-            <option value="theater2">theater2</option>
-        </select>
-        <br>
-        <button type="submit">查詢</button>
+    <input type="checkbox" name="Imax" id="movieScreen">Imax
+    <input type="checkbox" name="3D" id="movieScreen">3D
+    <input type="checkbox" name="digital" id="movieScreen">數位
+    <br>
+    <label for="area">地區</label>
 
-    </form>
-    <p>
-        {% for data in datas %}
-        {{data}}<br>
-        <img src="{{data.trailerLink}}" alt=""><br>
-        {% endfor %}
-    </p>
+    <select name="area" id="area">
+        <option value=""></option>
+        <option value="area1">area1</option>
+        <option value="area2">area2</option>
+    </select>
+    <br>
+    <label for="theater">影院</label>
 
-</body>
+    <select name="theater" id="theater">
+        <option value=""></option>
+        <option value="theater1">theater1</option>
+        <option value="theater2">theater2</option>
+    </select>
+    <br>
+    <button type="submit">查詢</button>
+</form>
 
-</html>
+<p>
+    {% for data in datas %}
+    {{data}}<br>
+    <img src="{{data.trailerLink}}" alt=""><br>
+    {% endfor %}
+</p>
+
+<div class="poster columns is-multiline">
+    {% for movie in movies %}
+    <a href="{% url 'movieInfo' movieID=142 %}" class="column is-4">
+        <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
+        <div class="movie-info">
+            <p class="title is-4">{{ movie.title }}</p>
+            <p class="content">{{ movie.info }}</p>
+            <select id="theater" name="theater">
+                {% for theater in movie.theaters %}
+                <option value="{{ theater }}">{{ theater }}</option>
+                {% endfor %}
+            </select>
+    </a>
+    {% endfor %}
+</div>
+
+<p>
+<div>
+    <div class="title">美麗華1</div>
+    {% for test in test1 %}
+    <div>{{test.電影名稱}}: {{test.電影海報網址}}</div>
+    {% endfor %}
+</div>
+
+<div>
+    <div class="title">美麗華2</div>
+    {% for test in test2 %}
+    <div>{{test.電影名稱}}: {{test.影城}}</div>
+    {% endfor %}
+</div>
+
+<div>
+    <div class="title">國賓1</div>
+    {% for test in test3 %}
+    <div>{{test.電影名稱}}: {{test.電影海報網址}}</div>
+    {% endfor %}
+</div>
+
+<div>
+    <div class="title">國賓2</div>
+    {% for test in test4 %}
+    <div>{{test.電影名稱}}: {{test.影城}}</div>
+    {% endfor %}
+</div>
+
+</p>
+
+{% endblock %}
