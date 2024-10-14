@@ -22,4 +22,5 @@ urlpatterns = [
     path("", views.searchRequest, name="search_index"),
     path("updateMovies/",views.UpdateMovies,name="updateMovies"),
     path("updateTheater/",views.UpdateTheater,name="updateTheater"),
+    path("movieInfo/<int:movieID>",views.movieInfo,name="movieInfo"),
 ]

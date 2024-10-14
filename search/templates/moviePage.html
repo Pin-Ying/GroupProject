@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block style %}
+<style>
+    .movie-info {
+        text-align: left;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<img src="{{movie.img_src}}" alt="尚無圖片" />
+<div class="title">{{movie.title}}</div>
+<div class="movie-info">
+    <p class="content is-5">
+        上映日期：{{movie.release_date}}<br>
+        電影時長：{{movie.running_time}}<br>
+        電影介紹：{{movie.info}}
+    </p>
+    <p>
+        {% for show in showInfo %}
+    <p>
+        {{show.theater}}
+        {{show.time}}
+        {{show.site}}
+    </p>
+    {% endfor %}
+    </p>
+</div>
+
+{% endblock %}

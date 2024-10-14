@@ -27,7 +27,7 @@ def get_movie():
         release_date = movie_item.find('span', class_='date').get_text(strip=True)
         movieupday.append(release_date)
         # 取得畫面格式
-        screen_formats = ', '.join([badge.get_text(strip=True) for badge in movie_item.find('div', class_='badge_area').find_all('a')])
+        screen_formats = [badge.get_text(strip=True) for badge in movie_item.find('div', class_='badge_area').find_all('a')]
         moviescreen.append(screen_formats)
         
     url=soup.select("li>a.img")

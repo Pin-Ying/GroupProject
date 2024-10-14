@@ -47,10 +47,12 @@ def movieSearch(df, searchDic, screens=["Imax", "3D", "數位"]):
 
         ### 電影螢幕搜尋
         if "movieScreen" in searchDic:
-            df["screen_type"] = df["screen_type"].map(
-                lambda x: x if x in searchDic["movieScreen"] else None
-            )
-            df = df.dropna(subset=["screen_type"])
+            for movieScreen in searchDic["movieScreen"]:
+                
+                df["screen_type"] = df["screen_type"].map(
+                    lambda x: "Target" if movieScreen.upper() in x else x
+                )
+            df = df[df["screen_type"]=="Target"]
 
         datas = df.to_dict("records")
     except Exception as e:

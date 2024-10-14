@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% block style %}
 <style>
+    a {
+        display: inline-block;
+        text-decoration: none;
+    }
+
     .poster {
         border-radius: 5px;
     }
@@ -75,18 +80,20 @@
     <div class="poster columns is-multiline">
         {% for movie in movies %}
         <div class="column is-4">
-            <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
-            <div class="movie-info">
-                <p class="title is-4">{{ movie.title }}</p>
-                <p class="content">{{ movie.info }}</p>
-                <select id="theater" name="theater">
-                    {% for theater in movie.theaters %}
-                    <option value="{{ theater }}">{{ theater }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+            <a href="{% url 'movieInfo' movieID=movie.id %}">
+                <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
+                <div class="movie-info">
+                    <p class="title is-4">{{ movie.title }}</p>
+                    <p class="content">{{ movie.info }}</p>
+                    <select id="theater" name="theater">
+                        {% for theater in movie.theaters %}
+                        <option value="{{ theater }}">{{ theater }}</option>
+                        {% endfor %}
+                    </select>
+            </a>
         </div>
-        {% endfor %}
+    </div>
+    {% endfor %}
     </div>
 </form>
 
@@ -102,4 +109,5 @@
         });
     });
 </script>
+
 {% endblock %}

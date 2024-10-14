@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.forms.models import model_to_dict
-from search.models import movie
+from search.models import movie,showTimeInfo,theater
 from search.searchMethod import movieSearch, theaterSearch
 import pandas as pd
 from .dataCrawl import miramar,ambassador
@@ -63,6 +63,7 @@ def searchRequest(request, methods=["GET", "POST"], templatePage="search/searchP
                 for movie in movie_datas
             ]
         )
+        screentypes=[]
 
         if request.method == "GET":
             searchDic={'search':'all'}
@@ -85,3 +86,16 @@ def searchRequest(request, methods=["GET", "POST"], templatePage="search/searchP
         movie_datas = ["error!"]
     # return render(request, templatePage,{'datas':datas})
     return render(request, templatePage, {"movies": datas, "searchDic": searchDic})
+
+def movieInfo(request,movieID):
+    movie_data = movie.objects.get(id=movieID)
+    show_data=showTimeInfo.objects.filter(movie=movieID)
+    theater_data=theater.objects.all()
+    movie_data=model_to_dict(movie_data)
+    show_data=[model_to_dict(data) for data in show_data]
+    for data in show_data:
+        data["theater"]=theater_data[data["theater"]]
+    print(movie_data,show_data)
+    return render(request,"moviePage.html",{"movie":movie_data,"showInfo":show_data})
+
+
