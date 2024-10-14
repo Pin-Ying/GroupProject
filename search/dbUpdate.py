@@ -1,7 +1,7 @@
 from search.models import movie,theater,showTimeInfo
-from datetime import datetime
+from datetime import date
 
-today=datetime.now().strftime("%Y-%m-%d")
+today=date.today()
 
 def movieUpdate(data):
     title = data['電影名稱']
@@ -31,8 +31,8 @@ def theaterUpdate(data):
     theaterData.save()
 
 def showUpdate(data):
-    # 清除過期的電影
-    movie.objects.filter(date<today).delete()
+    # 清除過期的電影(date__lt表示小於特定日期)
+    showTimeInfo.objects.filter(date__lt=today).delete()
 
     # 加入新電影
     movieId=data['電影名稱']
@@ -41,12 +41,15 @@ def showUpdate(data):
     time=data['時間']
     site=data['廳位席位']
 
-    if movie.objects.filter(movie=movieId,theater=theaterId,date=date,time=time,site=site):
-        return
-
     if movie.objects.filter(title=movieId) and theater.objects.filter(name=theaterId):
         movieId=movie.objects.get(title=movieId)
         theaterId=theater.objects.get(name=theaterId)
+        if showTimeInfo.objects.filter(movie=movieId,theater=theaterId,date=date,time=time,site=site):
+            return
         showData=showTimeInfo.objects.create(movie=movieId,theater=theaterId,date=date,time=time,site=site)
         showData.save()
 
+
+if __name__=="__main__":
+    data={'電影名稱':'test','影城':'test','日期':'2024-10-14','時間':'test','廳位席位':'test'}
+    print(showUpdate(data))

@@ -99,6 +99,7 @@ def get_theater():
         address=items.find_all('p')[0].text.strip()
         phone=items.find_all('p')[1].text.strip()
         theaters.append([title,"國賓影城",address,phone])
+        theaters.append([title,"國賓影城",address,phone])
     datas=pd.DataFrame(theaters,columns=["戲院名稱","影城", "影城位置", "影城電話"])
     return datas
     

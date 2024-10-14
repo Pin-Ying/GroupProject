@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+from datetime import datetime
 
 def get_soup(url):
     r=requests.get(url)
@@ -126,24 +127,19 @@ def get_movie():
 def get_showTimeInfo():
     soup=get_soup("https://www.miramarcinemas.tw/Timetable/Index?cinema=standard") #上映
 
-    totles=[]
+    total=[]
     title=soup.find_all('div',class_='title')
     papa=soup.find_all('div',class_='timetable_list row')
     for papas,titles in zip(papa,title):
-        y=[]
         if titles.text in papas.text:
             soup = BeautifulSoup(papas.prettify(), 'html.parser')
             dates = soup.find_all('a', class_='booking_date')
             # print(titles.text)
             for date in dates:
-                date_text = date.find('b').get_text(strip=True)  # 抓取日期 (如: 10/11)
-                
                 # 從 id 中獲取電影編號和日期（去掉 'a_' 前綴）
                 session_id = date['id'].split('_')[1]
                 full_date = date['id'].split('_')[2]  # 例如: 10月11日
-                full_date=[date.replace('/','-') for date in full_date]
-                
-                
+                date_text=str(datetime.now().year)+"-"+full_date.replace('月','-').replace('日','')
                 # 查找對應的場次區塊
                 session_div = soup.find('div', class_=f"block {session_id} {full_date}")
             
@@ -160,10 +156,9 @@ def get_showTimeInfo():
                     times = session_div.find_all('a', class_='booking_time')
                     for time in times:
                         time_text = time.get_text(strip=True)
-                    
-                    totles.append([titles.text,"美麗華影城",full_date,time_text,rooms])
+                    total.append([titles.text,"美麗華影城",date_text,time_text,rooms])
 
-    data=pd.DataFrame(totles,columns=["電影名稱","影城","日期","時間","廳位席位"])
+    data=pd.DataFrame(total,columns=["電影名稱","影城","日期","時間","廳位席位"])
     # data.to_csv("mlfmovietisr.csv",index=False,)
     return data
 
@@ -175,7 +170,7 @@ def get_theater():
     return data
 
 if __name__=="__main__":
-    print(get_movie())
-    # print(get_showTimeInfo())
+    # print(get_movie())
+    print(get_showTimeInfo())
     # print(get_theater())
     
