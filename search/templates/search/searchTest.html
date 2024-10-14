@@ -41,7 +41,7 @@
 
 <div class="poster columns is-multiline">
     {% for movie in movies %}
-    <a href="{% url 'movieInfo' movieID=142 %}" class="column is-4">
+    <a href="{% url 'movieInfo' movieID=movie.id %}" class="column is-4">
         <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
         <div class="movie-info">
             <p class="title is-4">{{ movie.title }}</p>

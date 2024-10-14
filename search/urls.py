@@ -20,8 +20,8 @@ from django.urls import path
 
 urlpatterns = [
     path("", views.searchRequest, name="search_index"),
-    path("updateMovies/",views.UpdateMovies,name="updateMovies"),
-    path("updateTheater/",views.UpdateTheater,name="updateTheater"),
-    path("movieInfo/<int:movieID>",views.movieInfo,name="movieInfo"),
-    path("test",views.test,name="test"),
+    path("updateMovies/", views.UpdateMovies, name="updateMovies"),
+    path("updateTheater/", views.UpdateTheater, name="updateTheater"),
+    path("movieInfo/<int:movieID>", views.movieInfo, name="movieInfo"),
+    path("test/", views.test, name="test"),
 ]
