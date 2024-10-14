@@ -108,10 +108,10 @@ def test(request):
     test2=miramar.get_showTimeInfo()
     test2=test2.to_dict("records")
 
-    ### 國賓
-    test3,test4=ambassador.get_movie_and_show()
-    test3,test4=test3.to_dict("records"),test4.to_dict("records")
-    return render(request,"search/searchTest.html",locals())
+    # ### 國賓
+    # test3,test4=ambassador.get_movie_and_show()
+    # test3,test4=test3.to_dict("records"),test4.to_dict("records")
+    # return render(request,"search/searchTest.html",locals())
 
 
 
