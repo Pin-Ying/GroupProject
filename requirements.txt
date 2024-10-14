@@ -1,4 +1,6 @@
-django
-gunicorn 
-django-heroku
-pandas
+beautifulsoup4==4.12.3
+Django==5.1
+django_heroku==0.3.1
+pandas==2.2.3
+Requests==2.32.3
+gunicorn
