@@ -17,11 +17,11 @@ def UpdateMovies(request):
     for data in datas:
         dbUpdate.movieUpdate(data)
     
-    # 電影場次
-    df=miramar.get_showTimeInfo()
-    datas=df.to_dict("records")
-    for data in datas:
-        dbUpdate.showUpdate(data)
+    # # 電影場次
+    # df=miramar.get_showTimeInfo()
+    # datas=df.to_dict("records")
+    # for data in datas:
+    #     dbUpdate.showUpdate(data)
     
     # ### 國賓
     # df1,df2=ambassador.get_movie_and_show()
