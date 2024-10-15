@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電影訂票</title>
+    <link rel="stylesheet" href="/booking">
+</head>
+<body>
+    <h1>電影訂票系統</h1>
+    <form action="/booking" method="post">
+        <label for="theater">戲院名稱：</label>
+        <input type="text" id="theater" name="theater" required><br>
+
+        <label for="movie">電影名稱：</label>
+        <input type="text" id="movie" name="movie" required><br>
+
+        <label for="date">日期：</label>
+        <input type="text" id="date" name="date" required><br>
+
+        <label for="time">場次：</label>
+        <input type="text" id="time" name="time" required><br>
+
+        <input type="submit" value="提交訂票">
+    </form>
+</body>
+</html>
+
