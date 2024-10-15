@@ -3,6 +3,7 @@ from django.forms.models import model_to_dict
 from search.models import movie,showTimeInfo,theater
 from search.searchMethod import movieSearch, theaterSearch
 import pandas as pd
+import threading
 from .dataCrawl import miramar,ambassador
 from . import dbUpdate
 
@@ -12,24 +13,30 @@ from django.http import HttpResponse
 
 
 def UpdateMovies(request):
+    ### datas
     ### 美麗華
-    # 電影
-    df=miramar.get_movie()
-    datas=df.to_dict("records")
-    dbUpdate.movieUpdate(datas)
-    
-    # 電影場次
-    df=miramar.get_showTimeInfo()
-    datas=df.to_dict("records")
-    dbUpdate.showUpdate(datas)
-    
-    ### 國賓
-    df1,df2=ambassador.get_movie_and_show()
-    datas=df1.to_dict("records")
-    dbUpdate.movieUpdate(datas)
-    datas=df2.to_dict("records")
-    dbUpdate.showUpdate(datas)
+    mir_movie=miramar.get_movie().to_dict("records")
+    mir_show=miramar.get_showTimeInfo().to_dict("records")
 
+    ### 國賓
+    amb_movie,amb_show=[data.to_dict("records") for data in ambassador.get_movie_and_show()]
+
+    # mir_threads
+    movieT=threading.Thread(dbUpdate.movieUpdate(mir_movie))
+    showT=threading.Thread(dbUpdate.showUpdate(mir_show))
+    movieT.start()
+    showT.start()
+    movieT.join()
+    showT.join()
+
+    ### amb_threads
+    movieT=threading.Thread(dbUpdate.movieUpdate(amb_movie))
+    showT=threading.Thread(dbUpdate.showUpdate(amb_show))
+    movieT.start()
+    showT.start()
+    movieT.join()
+    showT.join()
+    
     return HttpResponse('finish!')
 
 def UpdateTheater(request):
