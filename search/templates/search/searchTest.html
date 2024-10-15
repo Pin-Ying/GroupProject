@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block style %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+{% endblock %}
+
 {% block content %}
 <form action="" method="post">
     {% csrf_token %}
@@ -55,35 +59,23 @@
     {% endfor %}
 </div>
 
-<p>
-<div>
-    <div class="title">美麗華1</div>
-    {% for test in test1 %}
-    <div>{{test.電影名稱}}: {{test.電影海報網址}}</div>
-    {% endfor %}
+<div id="crawl-info">
+    爬取中...
 </div>
 
-<div>
-    <div class="title">美麗華2</div>
-    {% for test in test2 %}
-    <div>{{test.電影名稱}}: {{test.影城}}</div>
-    {% endfor %}
-</div>
-
-<div>
-    <div class="title">國賓1</div>
-    {% for test in test3 %}
-    <div>{{test.電影名稱}}: {{test.電影海報網址}}</div>
-    {% endfor %}
-</div>
-
-<div>
-    <div class="title">國賓2</div>
-    {% for test in test4 %}
-    <div>{{test.電影名稱}}: {{test.影城}}</div>
-    {% endfor %}
-</div>
-
-</p>
+<script>
+    crawlDiv = document.getElementById("crawl-info")
+    $.ajax(
+        {
+            url: "/updateMovies",
+            type: "GET",
+            dataType: "json",
+            success: (data) => {
+                console.log(data);
+                crawlDiv.innerHTML = "finish, see result in console.";
+            }
+        }
+    );
+</script>
 
 {% endblock %}

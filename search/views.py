@@ -1,9 +1,10 @@
 from django.shortcuts import render,redirect
 from django.forms.models import model_to_dict
+from django.http import JsonResponse
 from search.models import movie,showTimeInfo,theater
 from search.searchMethod import movieSearch, theaterSearch
 import pandas as pd
-import threading
+import threading,json
 from .dataCrawl import miramar,ambassador
 from . import dbUpdate
 
@@ -21,23 +22,28 @@ def UpdateMovies(request):
     ### 國賓
     amb_movie,amb_show=[data.to_dict("records") for data in ambassador.get_movie_and_show()]
 
+    dbUpdate.movieUpdate(mir_movie)
+    dbUpdate.showUpdate(mir_show)
+    dbUpdate.movieUpdate(amb_movie)
+    dbUpdate.showUpdate(amb_show)
+
     # mir_threads
-    movieT=threading.Thread(dbUpdate.movieUpdate(mir_movie))
-    showT=threading.Thread(dbUpdate.showUpdate(mir_show))
-    movieT.start()
-    showT.start()
-    movieT.join()
-    showT.join()
+    # movieT=threading.Thread(dbUpdate.movieUpdate(mir_movie))
+    # showT=threading.Thread(dbUpdate.showUpdate(mir_show))
+    # movieT.start()
+    # showT.start()
+    # movieT.join()
+    # showT.join()
 
     ### amb_threads
-    movieT=threading.Thread(dbUpdate.movieUpdate(amb_movie))
-    showT=threading.Thread(dbUpdate.showUpdate(amb_show))
-    movieT.start()
-    showT.start()
-    movieT.join()
-    showT.join()
+    # movieT=threading.Thread(dbUpdate.movieUpdate(amb_movie))
+    # showT=threading.Thread(dbUpdate.showUpdate(amb_show))
+    # movieT.start()
+    # showT.start()
+    # movieT.join()
+    # showT.join()
     
-    return HttpResponse('finish!')
+    return JsonResponse({"result": "finish!"})
 
 def UpdateTheater(request):
     ### 美麗華
@@ -101,19 +107,7 @@ def movieInfo(request,movieID):
     return render(request,"moviePage.html",{"movie":movie_data,"showInfo":show_data})
 
 def test(request):
-    ### 美麗華
-    # 電影
-    test1=miramar.get_movie()
-    test1=test1.to_dict("records")
-    
-    # 電影場次
-    test2=miramar.get_showTimeInfo()
-    test2=test2.to_dict("records")
-
-    # ### 國賓
-    # test3,test4=ambassador.get_movie_and_show()
-    # test3,test4=test3.to_dict("records"),test4.to_dict("records")
-    # return render(request,"search/searchTest.html",locals())
+    return render(request,"search/searchTest.html")
 
 
 
