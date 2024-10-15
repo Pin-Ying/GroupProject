@@ -5,33 +5,30 @@ from search.searchMethod import movieSearch, theaterSearch
 import pandas as pd
 from .dataCrawl import miramar,ambassador
 from . import dbUpdate
+
 from django.http import HttpResponse
 # test 123456789
 # Create your views here.
+
 
 def UpdateMovies(request):
     ### 美麗華
     # 電影
     df=miramar.get_movie()
     datas=df.to_dict("records")
-    for data in datas:
-        dbUpdate.movieUpdate(data)
+    dbUpdate.movieUpdate(datas)
     
     # 電影場次
     df=miramar.get_showTimeInfo()
     datas=df.to_dict("records")
-    for data in datas:
-        dbUpdate.showUpdate(data)
+    dbUpdate.showUpdate(datas)
     
     ### 國賓
     df1,df2=ambassador.get_movie_and_show()
     datas=df1.to_dict("records")
-    for data in datas:
-        dbUpdate.movieUpdate(data)
+    dbUpdate.movieUpdate(datas)
     datas=df2.to_dict("records")
-    for data in datas:
-        dbUpdate.showUpdate(data)
-
+    dbUpdate.showUpdate(datas)
 
     return HttpResponse('finish!')
 
@@ -39,14 +36,12 @@ def UpdateTheater(request):
     ### 美麗華
     df=miramar.get_theater()
     datas=df.to_dict("records")
-    for data in datas:
-        dbUpdate.theaterUpdate(data)
+    dbUpdate.theaterUpdate(datas)
     
     ### 國賓
     df=ambassador.get_theater()
     datas=df.to_dict("records")
-    for data in datas:
-        dbUpdate.theaterUpdate(data)
+    dbUpdate.theaterUpdate(datas)
 
     return HttpResponse('finish!')
 
