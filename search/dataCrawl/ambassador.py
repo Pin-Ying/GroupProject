@@ -1,7 +1,10 @@
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-import threading
+import threading,queue
+
+movie_queue=queue.Queue()
+show_queue=queue.Queue()
 
 def get_soup(url):
     r=requests.get(url)
@@ -38,8 +41,6 @@ def get_one_movie(url):
     seat=soups.select('div.theater-box>p.tag-seat')
     seats=set()
     for i in seat:
-        if "數位" in i.text:
-            seats.add("數位")
         if "3D" in i.text:
             seats.add("3D")
         if "IMAX" in i.text:
@@ -63,10 +64,12 @@ def get_one_movie(url):
             
             for time,seat in zip(times,seats):
                 show_infos.append([title,lcmove,date,time.text.strip(),seat.text])
-    finall.append(movie_datas)
-    movietisr.extend(show_infos)
+    return movie_queue.put(movie_datas),show_queue.put(show_infos)
 
-    return movie_datas,show_infos
+    # finall.append(movie_datas)
+    # movietisr.extend(show_infos)
+
+    # return movie_datas,show_infos
 
 
 def get_movie_and_show():
@@ -78,10 +81,15 @@ def get_movie_and_show():
         url="https://www.ambassador.com.tw"+a.get('href')
         crawl_thread=threading.Thread(target=get_one_movie,args=(url,))
         crawl_thread.start()
+        print(crawl_thread,'start!')
         threads.append(crawl_thread)
+
     for thread in threads:
         thread.join()
-        print(thread,'finish')
+    
+    for thread in threads:
+        finall.append(movie_queue.get())
+        movietisr.extend(show_queue.get())
 
     movie_datas=pd.DataFrame(finall,columns=["電影名稱", "電影海報網址", "上或待上映","電影預告網址","影片類型","主要演員","電影介紹","電影時長","電影螢幕"])
     show_datas=pd.DataFrame(movietisr,columns=["電影名稱","影城","日期","時間", "廳位席位"])
