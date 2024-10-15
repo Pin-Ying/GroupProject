@@ -12,6 +12,17 @@ from django.http import HttpResponse
 # test 123456789
 # Create your views here.
 
+def UpdateMiramar(request):
+    try:
+        mir_movie=miramar.get_movie().to_dict("records")
+        mir_show=miramar.get_showTimeInfo().to_dict("records")
+        dbUpdate.movieUpdate(mir_movie)
+        dbUpdate.showUpdate(mir_show)
+        return JsonResponse({'status':'finish!'})
+    except Exception as e:
+        return JsonResponse({'status':'error!'+str(e)})
+
+
 
 def UpdateMovies(request):
     ### datas
@@ -42,7 +53,7 @@ def UpdateMovies(request):
     # showT.start()
     # movieT.join()
     # showT.join()
-    
+
     return JsonResponse({"result": "finish!"})
 
 def UpdateTheater(request):
