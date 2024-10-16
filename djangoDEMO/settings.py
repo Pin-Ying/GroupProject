@@ -88,11 +88,14 @@ WSGI_APPLICATION = "djangoDEMO.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "vplqsji5qcq7t656",
-        "USER": "knlspe32zljpo014",
-        "PASSWORD":"ltsg4wmjayy24u59",
-        "HOST": "klbcedmmqp7w17ik.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+        "NAME": "pqxl0vpw51ynsr78",
+        "USER": "gmgy08re4ehye2cg",
+        "PASSWORD":"f3gyn7b7ghz552as",
+        "HOST": "c584md9egjnm02sk.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
         "PORT": "3306",
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'",
+        },
     }
 }
 

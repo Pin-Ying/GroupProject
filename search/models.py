@@ -11,10 +11,10 @@ class movie(models.Model):
     trailer_link=models.CharField(max_length=100, blank=True, null=True)
     movie_type=models.CharField(max_length=100, blank=True, null=True)
     main_actor=models.CharField(max_length=100, blank=True, null=True)
-    info = models.CharField(max_length=100, blank=True, null=True)
+    info = models.CharField(max_length=500, blank=True, null=True)
     release_date = models.DateField(max_length=100, blank=True, null=True)
     running_time = models.CharField(max_length=100, blank=True, null=True)
-    screen_type = models.CharField(max_length=20, blank=True, null=True)
+    screen_type = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.title

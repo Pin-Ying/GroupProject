@@ -74,6 +74,7 @@ def get_one_movie(url):
 
 def get_movie_and_show():
     # soup=get_soup('https://www.ambassador.com.tw/home/MovieList?Type=0')
+    print('get_movie_and_show START')
     soup=get_soup('https://www.ambassador.com.tw/home/MovieList')
     urls=soup.select("div.cell>a.poster")
     threads=[]
@@ -81,7 +82,6 @@ def get_movie_and_show():
         url="https://www.ambassador.com.tw"+a.get('href')
         crawl_thread=threading.Thread(target=get_one_movie,args=(url,))
         crawl_thread.start()
-        print(crawl_thread,'start!')
         threads.append(crawl_thread)
 
     for thread in threads:
@@ -93,11 +93,13 @@ def get_movie_and_show():
 
     movie_datas=pd.DataFrame(finall,columns=["電影名稱", "電影海報網址", "上或待上映","電影預告網址","影片類型","主要演員","電影介紹","電影時長","電影螢幕"])
     show_datas=pd.DataFrame(movietisr,columns=["電影名稱","影城","日期","時間", "廳位席位"])
+    print('get_movie_and_show FINISH')
     return movie_datas,show_datas
     
 
 
 def get_theater():
+    print('get_theater START')
     r=requests.get("https://www.ambassador.com.tw/home/TheaterList")
     soups = BeautifulSoup(r.text.split('<div class="fluid">')[0], 'html.parser')
     mourl=soups.select('div.grid-container div.cell > a')
@@ -109,6 +111,7 @@ def get_theater():
         theaters.append([title,"國賓影城",address,phone])
         theaters.append([title,"國賓影城",address,phone])
     datas=pd.DataFrame(theaters,columns=["戲院名稱","影城", "影城位置", "影城電話"])
+    print('get_theater FINISH')
     return datas
     
 
