@@ -77,6 +77,7 @@
 
     </div>
     <div class="poster columns is-multiline">
+        {% if movies %}
         {% for movie in movies %}
         <div class="column is-4">
             <a href="{% url 'movieInfo' movieID=movie.id %}">
@@ -94,6 +95,9 @@
             </div>
         </div>
         {% endfor %}
+        {% else %}
+        <div class="title column is-12">目前尚無電影資料</div>
+        {% endif %}
     </div>
 </form>
 

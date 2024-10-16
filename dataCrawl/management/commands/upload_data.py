@@ -8,6 +8,7 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **kwargs):
+        self.stdout.write('Data uploading...')
 
         dbUpdate.UpdateMovies()
         self.stdout.write(self.style.SUCCESS('Data uploaded to ModelA successfully'))

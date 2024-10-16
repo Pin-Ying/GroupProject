@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 import requests
-import pandas as pd
 from datetime import datetime
 
 def get_soup(url):
@@ -44,24 +43,15 @@ def get_movie():
                 movetype.append(text.replace("類型 GENRE", "").strip())  
             if "演員CAST" in text:  
                 cast.append(text.replace("演員CAST", "").strip())
-        # time=soup.select("div.movie_info>p.time")
-        # for i in time:
-        #     times.append((i.text.replace("片長:", "").strip())) 
+
         time=soup.find('p',class_="time")
         times.append((time.text.replace("片長:", "").strip()))     
-        # Preview=soup.select("div.col.m6.s12.block>a")
-        # for i in Preview:
-        #     Previewurl.append(i['href'])
+
         Preview=soup.find('a',class_="btn_link left")
         if Preview==None:
                 Previewurl.append('null')
         else:
             Previewurl.append(Preview['href'])
-        # sjr=soup.select("div.col.m6.s12")
-        # for sjrs in sjr:
-        #     text = sjrs.get_text(strip=True)
-        #     if "劇情簡介:" in text:
-        #         movsj.append((text.replace("assignment劇情簡介:", "").strip()))
         sjr=soup.find('div',class_="col m6 s12")
         movsj.append((sjr.text.replace("assignment劇情簡介:", "").strip()))
 
@@ -93,27 +83,16 @@ def get_movie():
                 movetype.append(text.replace("類型 GENRE", "").strip())  
             if "演員CAST" in text: 
                 cast.append(text.replace("演員CAST", "").strip())
-        # time=soup.select("div.movie_info>p.time")
-        # for i in time:
-        #     times.append((i.text.replace("片長:", "").strip()))     
+   
         time=soup.find('p',class_="time")
         times.append((time.text.replace("片長:", "").strip()))     
-        # Preview=soup.select("div.col.m6.s12.block>a")
-        # if len(Preview)==0:
-        #         Previewurl.append('null')
-        # else:
-        #     for i in Preview:
-        #         Previewurl.append(i['href'])
+
         Preview=soup.find('a',class_="btn_link left")
         if Preview==None:
                 Previewurl.append('null')
         else:
             Previewurl.append(Preview['href'])
-        # sjr=soup.select("div.col.m6.s12")
-        # for sjrs in sjr:
-        #     text = sjrs.get_text(strip=True)
-        #     if "劇情簡介:" in text:
-        #         movsj.append((text.replace("assignment劇情簡介:", "").strip()))
+
         sjr=soup.find('div',class_="col m6 s12")
         movsj.append((sjr.text.replace("assignment劇情簡介:", "").strip()))
         
@@ -121,9 +100,6 @@ def get_movie():
         # total.append(list(a))
         total.append({"電影名稱":items[0],"電影海報網址":items[1],"上或待上映":items[2],"電影預告網址":items[3],"影片類型":items[4],"主要演員":items[5],"電影介紹":items[6],"電影時長":items[7],"電影螢幕":items[8]})
 
-    # data=pd.DataFrame(total,columns=["電影名稱", "電影海報網址", "上或待上映","電影預告網址","影片類型","主要演員","電影介紹","電影時長","電影螢幕"])
-    # data.to_csv("mlfmovie.csv",index=False,)
-    # return data
     return total
 
 def get_showTimeInfo():
@@ -160,10 +136,7 @@ def get_showTimeInfo():
                         time_text = time.get_text(strip=True)
 
                     total.append({"電影名稱":titles.text,"影城":"美麗華影城","日期":date_text,"時間":time_text,"廳位席位":rooms})
-                    # total.append([titles.text,"美麗華影城",date_text,time_text,rooms])
 
-    # data=pd.DataFrame(total,columns=["電影名稱","影城","日期","時間","廳位席位"])
-    # data.to_csv("mlfmovietisr.csv",index=False,)
     return total
 
 def get_theater():
@@ -174,7 +147,6 @@ def get_theater():
     return data
 
 if __name__=="__main__":
-    # print(get_movie())
+    print(get_movie())
     print(get_showTimeInfo())
-    # print(get_theater())
-    
+    print(get_theater())

@@ -25,7 +25,7 @@ def searchRequest(request, methods=["GET", "POST"], templatePage="search/searchP
         if request.method == "GET":
             searchDic={'search':'all'}
             df=df.to_dict("records")
-            datas=theaterSearch(df,searchDic)
+            datas=theaterSearch(df,searchDic) if len(df)>0 else ""
             return render(request, templatePage,{"movies": datas})
 
         search = request.POST
@@ -51,7 +51,7 @@ def movieInfo(request,movieID):
     movie_data=model_to_dict(movie_data)
     show_data=[model_to_dict(data) for data in show_data]
     for data in show_data:
-        data["theater"]=theater_data[data["theater"]]
+        data["theater"]=theater_data.get(id=data["theater"])
     print(movie_data,show_data)
     return render(request,"moviePage.html",{"movie":movie_data,"showInfo":show_data})
 
