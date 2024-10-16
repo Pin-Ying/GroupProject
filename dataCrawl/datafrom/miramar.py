@@ -8,7 +8,7 @@ def get_soup(url):
     soup = BeautifulSoup(r.text, 'html.parser')
     return soup
 
-totle=[]
+total=[]
 moviename,movieposterurl,movieupday,moviescreen = [],[],[],[]
 urls1,urls2,Previewurl=[],[],[]
 cast,movetype,times,movsj=[],[],[],[]
@@ -117,12 +117,14 @@ def get_movie():
         sjr=soup.find('div',class_="col m6 s12")
         movsj.append((sjr.text.replace("assignment劇情簡介:", "").strip()))
         
-    for a in zip(moviename,movieposterurl,movieupday,Previewurl,movetype,cast,movsj,times,moviescreen):
-        totle.append(list(a))
+    for items in zip(moviename,movieposterurl,movieupday,Previewurl,movetype,cast,movsj,times,moviescreen):
+        # total.append(list(a))
+        total.append({"電影名稱":items[0],"電影海報網址":items[1],"上或待上映":items[2],"電影預告網址":items[3],"影片類型":items[4],"主要演員":items[5],"電影介紹":items[6],"電影時長":items[7],"電影螢幕":items[8]})
 
-    data=pd.DataFrame(totle,columns=["電影名稱", "電影海報網址", "上或待上映","電影預告網址","影片類型","主要演員","電影介紹","電影時長","電影螢幕"])
+    # data=pd.DataFrame(total,columns=["電影名稱", "電影海報網址", "上或待上映","電影預告網址","影片類型","主要演員","電影介紹","電影時長","電影螢幕"])
     # data.to_csv("mlfmovie.csv",index=False,)
-    return data
+    # return data
+    return total
 
 def get_showTimeInfo():
     soup=get_soup("https://www.miramarcinemas.tw/Timetable/Index?cinema=standard") #上映
@@ -156,11 +158,13 @@ def get_showTimeInfo():
                     times = session_div.find_all('a', class_='booking_time')
                     for time in times:
                         time_text = time.get_text(strip=True)
-                    total.append([titles.text,"美麗華影城",date_text,time_text,rooms])
 
-    data=pd.DataFrame(total,columns=["電影名稱","影城","日期","時間","廳位席位"])
+                    total.append({"電影名稱":titles.text,"影城":"美麗華影城","日期":date_text,"時間":time_text,"廳位席位":rooms})
+                    # total.append([titles.text,"美麗華影城",date_text,time_text,rooms])
+
+    # data=pd.DataFrame(total,columns=["電影名稱","影城","日期","時間","廳位席位"])
     # data.to_csv("mlfmovietisr.csv",index=False,)
-    return data
+    return total
 
 def get_theater():
     import pandas as pd

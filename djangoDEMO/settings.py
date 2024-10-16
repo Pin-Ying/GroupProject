@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "search.apps.SearchConfig",
     "user.apps.UserConfig",
     "booking.apps.BookingConfig",
+    "dataCrawl.apps.DatacrawlConfig",
 ]
 
 MIDDLEWARE = [

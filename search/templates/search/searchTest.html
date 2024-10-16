@@ -59,23 +59,5 @@
     {% endfor %}
 </div>
 
-<div id="crawl-info">
-    Crawling...
-</div>
-
-<script>
-    crawlDiv = document.getElementById("crawl-info")
-    $.ajax(
-        {
-            url: "/updateMovies",
-            type: "GET",
-            dataType: "json",
-            success: (data) => {
-                console.log(data);
-                crawlDiv.innerHTML = "finish, see result in console.";
-            }
-        }
-    );
-</script>
 
 {% endblock %}
