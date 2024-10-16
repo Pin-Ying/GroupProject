@@ -76,30 +76,34 @@
         </div>
 
     </div>
-    <div class="poster columns is-multiline">
-        {% if movies %}
-        {% for movie in movies %}
-        <div class="column is-4">
-            <a href="{% url 'movieInfo' movieID=movie.id %}">
-                <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
-            </a>
-            <div class="movie-info">
-                <p class="title is-4">{{ movie.title }}</p>
-                <p class="content">{{ movie.info }}</p>
-                <select id="theater" name="theater">
-                    {% for theater in movie.theaters %}
-                    <option value="{{ theater }}">{{ theater }}</option>
-                    {% endfor %}
-                </select>
-
-            </div>
-        </div>
-        {% endfor %}
-        {% else %}
-        <div class="title column is-12">目前尚無電影資料</div>
-        {% endif %}
-    </div>
 </form>
+<div class="poster columns is-multiline">
+    {% if movies %}
+    {% for movie in movies %}
+    <div class="column is-4">
+        {% if movie.id %}
+        <a href="{% url 'movieInfo' movieID=movie.id %}">
+            <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
+        </a>
+        {% else %}
+        <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
+        {% endif %}
+        <div class="movie-info">
+            <p class="title is-4">{{ movie.title }}</p>
+            <p class="content">{{ movie.info }}</p>
+            <select id="theater" name="theater">
+                {% for theater in movie.theaters %}
+                <option value="{{ theater }}">{{ theater }}</option>
+                {% endfor %}
+            </select>
+
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="title column is-12">目前尚無電影資料</div>
+    {% endif %}
+</div>
 
 <script>
     $(function () {

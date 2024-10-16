@@ -9,6 +9,8 @@ import pandas as pd
 # Create your views here.
 
 def searchRequest(request, methods=["GET", "POST"], templatePage="search/searchPage.html"):
+    searchDic=""
+    datas=""
         
     try:
         ### 資料庫讀取全部資料
@@ -39,8 +41,6 @@ def searchRequest(request, methods=["GET", "POST"], templatePage="search/searchP
 
     except Exception as e:
         print(e)
-        datas = ["error!"]
-        movie_datas = ["error!"]
     # return render(request, templatePage,{'datas':datas})
     return render(request, templatePage, {"movies": datas, "searchDic": searchDic})
 

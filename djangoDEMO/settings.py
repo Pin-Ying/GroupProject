@@ -85,12 +85,13 @@ WSGI_APPLICATION = "djangoDEMO.wsgi.application"
 #         "NAME": os.environ.get("DATABASE_URL", BASE_DIR / "db.sqlite3"),
 #     }
 # }
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "pqxl0vpw51ynsr78",
-        "USER": "gmgy08re4ehye2cg",
-        "PASSWORD":"f3gyn7b7ghz552as",
+        "NAME": "o2nm1cdf509arke7",
+        "USER": "fel6ca7h54kqk04e",
+        "PASSWORD":"czs3ocs7kztdvcep",
         "HOST": "c584md9egjnm02sk.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
         "PORT": "3306",
         'OPTIONS': {

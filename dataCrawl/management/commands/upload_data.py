@@ -10,9 +10,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.stdout.write('Data uploading...')
 
-        self.stdout.write('UpdateTheater START...')
-        dbUpdate.UpdateTheater()
-        self.stdout.write('UpdateTheater FINISH')
+        # self.stdout.write('UpdateTheater START...')
+        # dbUpdate.UpdateTheater()
+        # self.stdout.write('UpdateTheater FINISH')
         self.stdout.write('UpdateMovies START...')
         dbUpdate.UpdateMovies()
         self.stdout.write('UpdateMovies FINISH')
