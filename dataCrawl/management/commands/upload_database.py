@@ -30,9 +30,9 @@ class Command(BaseCommand):
             self.stdout.write('UpdateMovies FINISH')
         
         elif model == 'shows':
-            self.stdout.write('UpdateActors START...')
+            self.stdout.write('UpdateShows START...')
             dbUpdate.UpdateShows()  # 假設你已經定義了這個函數
-            self.stdout.write('UpdateActors FINISH')
+            self.stdout.write('UpdateShows FINISH')
 
         self.stdout.write(self.style.SUCCESS('Data uploaded successfully'))
 
