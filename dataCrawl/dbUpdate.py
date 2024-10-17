@@ -1,6 +1,6 @@
 from django.db.models import Max
 from search.models import movie,theater,showTimeInfo
-from .datafrom import miramar,ambassador
+from .datafrom import miramar,ambassador,showtimes
 from datetime import date
 import pandas as pd
 
@@ -82,6 +82,10 @@ def showUpdate(datas):
 
 def UpdateMovies():
     ### datas
+
+    ### 威泰
+    sho_movies=showtimes.scrape_all_movies()
+
     ### 美麗華
     mir_movie=miramar.get_movie()
     # mir_show=miramar.get_showTimeInfo()
@@ -89,7 +93,7 @@ def UpdateMovies():
     ### 國賓
     amb_movie,amb_show=ambassador.get_movie_and_show()
 
-    movies=pd.concat([mir_movie,amb_movie]).drop_duplicates(subset=['電影名稱'])
+    movies=pd.concat([sho_movies,mir_movie,amb_movie]).drop_duplicates(subset=['電影名稱'])
     movieUpdate(movies.to_dict("records"))
     # showUpdate(mir_show+mir_show)
 

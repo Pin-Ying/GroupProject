@@ -9,6 +9,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
 
+
+
+
 def scrape_all_movies():
     url = "https://www.showtimes.com.tw/programs"
     driver = webdriver.Chrome()
@@ -80,6 +83,10 @@ def scrape_all_movies():
                         movie_data['電影時長'] = movie_time.text
                     except NoSuchElementException:
                         movie_data['電影時長'] = "未知"
+
+                    movie_data['電影海報網址']="未知"
+                    movie_data['電影預告網址']="未知"
+
                     
                     all_movies_data.append(movie_data)
                     print(f"成功抓取 {movie_data['電影名稱']} 的資料")
