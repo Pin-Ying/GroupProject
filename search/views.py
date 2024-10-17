@@ -22,7 +22,6 @@ def searchRequest(request, methods=["GET", "POST"], templatePage="search/searchP
                 for movie in movie_datas
             ]
         )
-        screentypes=[]
 
         if request.method == "GET":
             searchDic={'search':'all'}
