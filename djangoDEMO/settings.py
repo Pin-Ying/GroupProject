@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import django_heroku,os
+import django_heroku, os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -59,7 +59,7 @@ ROOT_URLCONF = "djangoDEMO.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ['templates'],
+        "DIRS": ["templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -105,11 +105,11 @@ DATABASES = {
 #         "ENGINE": "django.db.backends.mysql",
 #         "NAME": "ynhd1va580isryw8",
 #         "USER": "qk5uybwfz8htfj2a",
-#         "PASSWORD":"tngspuyjcxetc7jl",
+#         "PASSWORD": "tngspuyjcxetc7jl",
 #         "HOST": "r4919aobtbi97j46.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
 #         "PORT": "3306",
-#         'OPTIONS': {
-#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'",
+#         "OPTIONS": {
+#             "init_command": "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'",
 #         },
 #     }
 # }
@@ -141,7 +141,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = "zh-Hant"
 
 # TIME_ZONE = "UTC"
-TIME_ZONE = 'Asia/Taipei'
+TIME_ZONE = "Asia/Taipei"
 
 USE_I18N = True
 

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>戲院介紹</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            display: flex;
+            flex-grow: 1;
+            margin-top: 60px; /* 留出 header 空間 */
+        }
+        .left-section, .right-section {
+            height: calc(100vh - 60px); /* 減去 header 的高度 */
+            padding: 20px;
+        }
+        .left-section {
+            width: 50%;
+            background-color: #f2f2f2;
+        }
+        .right-section {
+            width: 50%;
+            background-color: #e6e6e6;
+            display: flex;
+            flex-direction: column;
+        }
+        .title {
+            height: 10%;
+            text-align: center;
+            font-size: 48px; /* 字體大小增加兩倍 */
+            padding-top: 10px;
+        }
+        .cinema-photo {
+            height: auto; /* 使圖片高度自動 */
+            max-height: 480px; /* 限制圖片最大高度 */
+            text-align: center;
+            margin-bottom: 10px; /* 新增下邊距，避免重疊 */
+        }
+        .cinema-photo img {
+            max-height: 480px; /* 高度設置為480 */
+            max-width: 100%;
+            width: 100%; /* 使圖片全寬 */
+        }
+        .cinema-description {
+            height: 70%;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 1.5em; /* 字體加大1.5倍 */
+            font-weight: bold; /* 粗體 */
+        }
+
+         .dropdown-section select {
+            width: 400px; /* 將寬度設為 1.5 倍 */
+            height: 50px; /* 將高度設為 1.5 倍 */
+            font-size: 2em; /* 字體大小增加 2 倍 */
+            padding: 5px; /* 可以調整內邊距 */
+            margin-right: 10px; /* 右邊距，與按鈕保持距離 */
+            font-size: 1.5em; /* 字體大小 */
+            border-radius: 4px; /* 圓角 */
+        }
+            .dropdown-section button {
+            height: 50px; /* 與 select 相同的高度 */
+            padding: 5px 15px; /* 按鈕內邊距 */
+            font-size: 1.5em; /* 字體大小 */
+            background-color: white; /* 按鈕背景顏色為白色 */
+            color: black; /* 按鈕字體顏色為黑色 */
+            border: 1px solid black; /* 黑色邊框 */
+            border-radius: 4px; /* 圓角 */
+            cursor: pointer; /* 游標樣式 */
+        }
+
+            .transport-section {
+            height: 50%;
+            padding: 10px;
+            font-size: 1.5em;
+            padding: 20px;
+        }
+
+        .map-section {
+            height: 50%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- 頂部 header -->
+  <header style="background-color: #333; color: #fff; padding: 1px; text-align: center;">
+        <!-- 第一行 -->
+        <div style="display: flex; justify-content: center; padding: 5px;">
+            <button style="border: none; background-color: transparent; color: white; cursor: pointer;" onclick="location.href='/2/'">宏碁專案電影整合</button>
+        </div>
+        <!-- 第二行 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px;">
+            <button onclick="location.href='#'">線正熱映中</button>
+            <button onclick="location.href='#'">近期上映</button>
+            <input type="text" placeholder="帳號" class="login-input" style="margin: 0 5px;">
+            <input type="password" placeholder="密碼" class="login-input" style="margin: 0 5px;">
+            <button onclick="location.href='#'">登入</button>
+            <button onclick="window.location.href='4.html';" class="input-button">註冊</button>
+        </div>
+    </header>
+
+    <!-- 左右內容部分 -->
+    <div class="content">
+        <!-- 左半部分 -->
+        <div class="left-section">
+            <div class="title">{{title}}</div>
+            <div class="cinema-photo">
+                <img src="{{url}}" alt="戲院照片">
+            </div>
+            <div class="cinema-description">
+                <p>{{sj}}</p>
+            </div>
+        </div>
+
+        <!-- 右半部分 -->
+        <div class="right-section">
+            <div class="dropdown-section">
+                <form action="/6/" method="POST">
+                    {% csrf_token %}
+                    <select name="Select">
+                        {% for cinema_group in cinema_groups %}
+                            <optgroup label="{{ cinema_group.group_name }}">
+                                {% for cinema in cinema_group.cinemas %}
+                                    <option value="{{ cinema }}">{{ cinema }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">搜尋</button>
+                </form>
+            </div>
+            <div class="transport-section">
+                <h3>交通方式</h3>
+                <p>{{tra}}</p>
+            </div>
+            <div class="map-section" style="height: 100%; width: 100%;">
+                <div id="estimated-time" style="font-size: 1.5em; color: #333; text-align: center; padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc; border-radius: 4px;">
+                    預估抵達時間: 尚未計算，請同意定位
+                </div>
+                <div id="map" style="width:100%; height:100%;"></div>
+                <script>
+                    var map, infoWindow, userMarker, directionsService, directionsRenderer, geocoder;
+                    var locations = [];  // 沒有預設地標
+
+                    function initMap() {
+                        map = new google.maps.Map(document.getElementById('map'), {
+                            zoom: 12,
+                            center: { lat: 25.0330, lng: 121.5654 }  // 台北的中心位置
+                        });
+
+                        infoWindow = new google.maps.InfoWindow;
+                        directionsService = new google.maps.DirectionsService();
+                        directionsRenderer = new google.maps.DirectionsRenderer();
+                        directionsRenderer.setMap(map);
+                        geocoder = new google.maps.Geocoder();
+
+                        // 獲取並顯示用戶的位置
+                        if (navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(function(position) {
+                                var pos = {
+                                    lat: position.coords.latitude,
+                                    lng: position.coords.longitude
+                                };
+
+                                infoWindow.setPosition(pos);
+                                infoWindow.setContent('您的位置');
+                                infoWindow.open(map);
+                                map.setCenter(pos);
+
+                                if (!userMarker) {
+                                    userMarker = new google.maps.Marker({
+                                        position: pos,
+                                        map: map,
+                                        title: '您的位置'
+                                    });
+                                }
+
+                                // 自動顯示到指定地點的路徑
+                                geocodeAddress("{{title}}", pos);  // 使用地理編碼找到目標地點
+                            }, function() {
+                                handleLocationError(true, infoWindow, map.getCenter());
+                            });
+                        } else {
+                            // 瀏覽器不支持 Geolocation
+                            handleLocationError(false, infoWindow, map.getCenter());
+                        }
+                    }
+
+                    // 解析地址並顯示路徑
+                    function geocodeAddress(address, userPos) {
+                        geocoder.geocode({ 'address': address }, function(results, status) {
+                            if (status === google.maps.GeocoderStatus.OK) {
+                                var destination = results[0].geometry.location;
+                                map.setCenter(destination);
+                                new google.maps.Marker({
+                                    position: destination,
+                                    map: map,
+                                    title: address
+                                });
+
+                                // 顯示路徑
+                                calculateAndDisplayRoute(userPos, destination);
+                            } else {
+                                alert('無法找到地址: ' + status);
+                            }
+                        });
+                    }
+
+                    // 計算並顯示路徑
+                    function calculateAndDisplayRoute(origin, destination) {
+                        var request = {
+                            origin: origin,
+                            destination: destination,
+                            travelMode: google.maps.TravelMode.DRIVING
+                        };
+
+                        directionsService.route(request, function(result, status) {
+                            if (status === google.maps.DirectionsStatus.OK) {
+                                directionsRenderer.setDirections(result);
+                                const duration = result.routes[0].legs[0].duration.text;
+
+                                // 更新預估行駛時間到 HTML 中的 #estimated-time
+                                document.getElementById('estimated-time').innerText = '預估抵達時間: ' + duration;
+                            } else {
+                                alert('無法規劃路線: ' + status);
+                            }
+                        });
+                    }
+
+                    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+                        if (browserHasGeolocation) {
+                            // 如果使用者拒絕存取位置，顯示指定的影城位置
+                            var defaultCinemaPos = geocodeAddress("{{title}}");  // 國賓長春影城的位置
+                            map.setCenter(defaultCinemaPos);
+
+                            // 自動顯示到指定地點的路徑 (從影城本身到影城，不會顯示路線)
+                            new google.maps.Marker({
+                                position: defaultCinemaPos,
+                                map: map,
+                                title: '{{title}}'
+                            });
+                        } else {
+                            // 瀏覽器不支持 Geolocation
+                            infoWindow.setPosition(pos);
+                            infoWindow.setContent('Error: Your browser doesn\'t support geolocation.');
+                            infoWindow.open(map);
+                        }
+                    }
+                </script>
+                <script async defer
+                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUY2fhxDaZmULzO5a_qWE20LxN-FTD-i8&callback=initMap">
+                </script>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>評論成功</title>
+    <script>
+        setTimeout(function () {
+            window.location.href = "{% url 'movieInfo' movieID=movie_id}";
+        }, 3000);  // 3秒後跳轉
+    </script>
+</head>
+
+<body>
+    <h2>評論成功！</h2>
+    <p>稍候，畫面即將跳轉...</p>
+</body>
+
+</html>

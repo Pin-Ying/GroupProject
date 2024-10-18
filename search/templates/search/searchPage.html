@@ -34,11 +34,9 @@
         <div class="column is-5">
             <div class="title">選擇螢幕(Imax, 3D, 數位)</div>
             <input type="checkbox" id="Imax" name="Imax">
-            <label for="Imax">Imax</label>
+            <label for="Imax">有無Imax</label>
             <input type="checkbox" id="3D" name="3D">
-            <label for="3D">3D</label>
-            <input type="checkbox" id="digital" name="數位">
-            <label for="digital">數位</label>
+            <label for="3D">有無3D</label>
         </div>
         <div class="column">
             <div class="control">
@@ -91,11 +89,15 @@
         <div class="movie-info">
             <p class="title is-4">{{ movie.title }}</p>
             <p class="content">{{ movie.info }}</p>
-            <select id="theater" name="theater">
-                {% for theater in movie.theaters %}
-                <option value="{{ theater }}">{{ theater }}</option>
-                {% endfor %}
-            </select>
+            <form action="{% url 'seats' %}">
+                <input type="hidden" name="movie_title" value="{{movie.title}}">
+                <select id="theater" name="theater">
+                    {% for theater in movie.theaters %}
+                    <option value="{{ theater }}">{{ theater }}</option>
+                    {% endfor %}
+                </select>
+                <button class="button is-medium is-info" type="submit">搜尋</button>
+            </form>
 
         </div>
     </div>

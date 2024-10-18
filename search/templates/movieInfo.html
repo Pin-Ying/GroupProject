@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% block style %}
+<!-- <style>
+    /* General styles */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        /* Remove default margin */
+        padding: 0;
+        /* Remove default padding */
+        background-color: #f0f0f0;
+    }
+
+    button {
+        padding: 16px 20px;
+        background-color: #0066cc;
+        color: #fff;
+        border: none;
+        border-radius: 0;
+        /* Remove border radius */
+        cursor: pointer;
+        font-size: 20px;
+        display: block;
+        /* Ensure block display */
+        width: 100%;
+        /* Full width */
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    section,
+    footer {
+        margin-bottom: 20px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+    }
+
+    .clearfix::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    /* Movie details page specific styles */
+    .movie-poster {
+        float: left;
+        width: 25%;
+        margin-right: 20px;
+    }
+
+    .movie-poster img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .movie-details {
+        float: left;
+        width: 70%;
+        font-size: 24px;
+        /* 調整字體大小 */
+        margin-bottom: 10px;
+        /* 增加下方的空白 */
+    }
+
+    h1 {
+        font-size: 24px;
+        /* Increased font size */
+        margin-bottom: 10px;
+        /* Added margin */
+    }
+
+    .movie-info-left,
+    .movie-info-right {
+        flex: 1;
+        /* 讓左右兩側各佔一半 */
+        padding: 10px;
+    }
+
+    .movie-info-right-btn {
+        flex: 0.5;
+        /* 讓左右兩側各佔一半 */
+        padding: 10px;
+    }
+
+    .movie-info-right {
+        text-align: right;
+        /* 保持文字靠右 */
+        margin-top: 40px;
+        /* 增加上方的空白，讓評論區域向下移動 */
+    }
+
+    .movie-info-right p {
+        font-size: 24px;
+        /* 調整字體大小 */
+        margin-bottom: 10px;
+        /* 增加下方的空白 */
+    }
+
+    footer {
+        text-align: center;
+        /* Center align content */
+    }
+
+    label {
+        margin-right: 10px;
+    }
+
+    select,
+    input[type="date"],
+    button {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-right: 10px;
+        font-size: 16px;
+    }
+
+    input[type="date"] {
+        width: 150px;
+    }
+
+    .comment-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        /* Adjust to fit screen */
+        gap: 20px;
+        /* Space between comment boxes */
+    }
+
+    .comment-box {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 5px;
+        font-size: 20px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .movie-info-com {
+        text-align: center;
+    }
+</style> -->
+{% endblock %}
+{% block content %}
+<header
+    style="background-color: #333; color: #fff; padding: 20px; text-align: center; display: flex; justify-content: space-between;">
+    <button
+        style="flex: 1; border: none; background-color: transparent; color: white; cursor: pointer; font-size: 30px;"
+        onclick="window.location.href='/2/';">宏碁專案電影整合</button>
+</header>
+<section>
+    <div style="float: left; font-size: 60px;">{{ movie_name }}</div>
+    <div style="float: right;"><button onclick="window.location.href='login.html';">登入</button></div>
+    <div class="clearfix"></div>
+</section>
+<div class="columns">
+    <div class="movie-poster column">
+        <img src="{{movie.img_src}}" alt="尚無圖片" />
+    </div>
+    <div class="movie-details column">
+        <h1>{{ movie.info }}</h1>
+        <div class="movie-info-left">
+            <p>類型: {{ movie.movie_type }}</p>
+            <p>演員: {{ movie.main_actor }}</p>
+        </div>
+        <div class="movie-info-right">
+            <p style="font-size: 35px;">隨機三則評論:</p>
+            {% for random in random_comment %}
+            <p>{{ random }}</p>
+            {% endfor %}
+            <button type="button" onclick="location.href='#commentSection'">前往評論</button>
+        </div>
+    </div>
+</div>
+<div class="">
+    <p style="font-size: 35px;">評論:</p>
+    <div class="movie-info-com columns is-multiline">
+
+        {% for Comment in movie_Comment %}
+        <div class="comment-box column is-2" style="background-color: blanchedalmond;">{{ Comment }}</div>
+        {% endfor %}
+
+        <!-- 新增評論輸入框與送出按鈕 -->
+
+    </div>
+    <form action="{% url 'submit_comment' %}" id="commentSection" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="電影名稱" value="{{ movie_name }}">
+        <textarea name="comment" placeholder="輸入你的評論" style="width: 100%; height: 100px;font-size: 20px;"></textarea>
+        <button type="submit" style="margin-top: 10px;">送出評論</button>
+    </form>
+</div>
+{% endblock %}
