@@ -42,6 +42,11 @@ def searchRequest(
     # return render(request, templatePage,{'datas':datas})
     return render(request, templatePage, {"movies": datas, "searchDic": searchDic})
 
+def theaters(request):
+    theaters=theater.objects.all()
+    cinema_list=list(set(theater.cinema for theater in theaters))
+    return render(request,'search/theaterPage.html',{'theaters':theaters,'cinemas':cinema_list})
+
 
 def seats(request):
     movie_title = request.GET.get("movie_title")

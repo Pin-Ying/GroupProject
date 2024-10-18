@@ -2,7 +2,11 @@
 <html lang="zh-TW">
 
 <head>
-    <title>電影院資訊</title>
+    <title>
+        {% block title %}
+        宏碁專案電影整合
+        {% endblock %}
+    </title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
     <style>
         body {
@@ -16,6 +20,16 @@
 
         .column {
             height: auto;
+        }
+
+        .scrollable-content {
+            font-size: large;
+            color: white;
+            max-height: 400px;
+            background-color: #555;
+            overflow-y: auto;
+            border: 1px solid #dbdbdb;
+            padding: 1rem;
         }
     </style>
     {% block style %}
@@ -32,7 +46,7 @@
     </div>
     <div class="columns is-vcentered">
         <a class="column button is-medium" href="{% url 'search_index' %}">搜尋電影</a>
-        <a class="column button is-medium" href="location.href='#'">劇院資料</a>
+        <a class="column button is-medium" href="{% url 'theaters' %}">劇院資料</a>
 
         {% if user.is_authenticated %}
         <a class="column" href="{% url 'profile' %}"><span class="username">使用者: {{user.username}}</span></a>

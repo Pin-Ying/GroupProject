@@ -20,5 +20,6 @@ from django.urls import path
 
 urlpatterns = [
     path("", views.searchRequest, name="search_index"),
+    path("theaters/", views.theaters,name="theaters"),
     path("seats/", views.seats, name="seats"),
 ]

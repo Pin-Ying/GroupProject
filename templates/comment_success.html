@@ -6,7 +6,7 @@
     <title>評論成功</title>
     <script>
         setTimeout(function () {
-            window.location.href = "{% url 'movieInfo' movieID=movie_id}";
+            window.location.href = "{% url 'movieInfo' movieID=movie_id %}";
         }, 3000);  // 3秒後跳轉
     </script>
 </head>

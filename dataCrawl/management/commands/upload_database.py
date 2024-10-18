@@ -2,6 +2,7 @@
 
 from django.core.management.base import BaseCommand
 from dataCrawl import dbUpdate
+from dataCrawl import comments
 
 class Command(BaseCommand):
     help = 'Upload data to multiple models using bulk_create'
@@ -10,7 +11,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--model', 
             type=str, 
-            choices=['theaters', 'movies', 'shows'], 
+            choices=['theaters', 'movies', 'shows','comments'], 
             help='Specify which model to update'
         )
 
@@ -33,6 +34,11 @@ class Command(BaseCommand):
             self.stdout.write('UpdateShows START...')
             dbUpdate.UpdateShows()  # 假設你已經定義了這個函數
             self.stdout.write('UpdateShows FINISH')
+        
+        elif model == 'comments':
+            self.stdout.write('import_reviews START...')
+            comments.import_reviews()
+            self.stdout.write('import_reviews FINISH')
 
         self.stdout.write(self.style.SUCCESS('Data uploaded successfully'))
 

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block style %}
+<style>
+    a {
+        text-decoration: none;
+    }
+
+    .theater_name {
+        color: rgb(130, 145, 145);
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    .box {
+        margin: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+</form>
+<div class="box">
+    {% if theaters %}
+    {% for cinema in cinemas %}
+    <div class="title" style="text-align: left;">{{cinema}}</div>
+    <div class="columns is-multiline">
+        {% for theater in theaters %}
+        {% if theater.cinema in cinema %}
+        <div class="column is-2">
+            <a href="{% url 'theaterInfo' %}?theaterID={{ theater.id }}">
+                <p class="theater_name title is-5">{{ theater.name }}</p>
+            </a>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="title column is-12">目前尚無影城資料</div>
+    {% endif %}
+</div>
+
+<script>
+    $(function () {
+        var len = 200; // 超過字數以"..."取代
+        $(".content").each(function (i) {
+            if ($(this).text().length > len) {
+                $(this).attr("title", $(this).text());
+                var text = $(this).text().substring(0, len - 1) + "...";
+                $(this).text(text);
+            }
+        });
+    });
+</script>
+
+{% endblock %}

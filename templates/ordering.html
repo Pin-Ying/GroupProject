@@ -1,201 +1,197 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
+{% extends 'base.html' %}
+{% block title %}
+訂票資訊
+{% endblock %}
+{% block style %}
+<style>
+    /* 同原样式 */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #000000;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        height: 100vh;
+        color: #ffffff;
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Booking</title>
-    <style>
-        /* 同原样式 */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #000000;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
-            color: #ffffff;
-        }
+    .container {
+        width: 90%;
+        max-width: 1200px;
+        background-color: #1A1A1A;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+    }
 
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            background-color: #1A1A1A;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-        }
+    .form-section {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-        .form-section {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+    .date-box {
+        padding: 10px;
+        margin-right: 10px;
+        font-size: 1.2em;
+        background-color: #ffffff;
+        color: #000000;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 200px;
+        text-align: center;
+    }
 
-        .date-box {
-            padding: 10px;
-            margin-right: 10px;
-            font-size: 1.2em;
-            background-color: #ffffff;
-            color: #000000;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 200px;
-            text-align: center;
-        }
+    .form-section button {
+        padding: 10px 20px;
+        font-size: 1.2em;
+        background-color: #002D62;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 
-        .form-section button {
-            padding: 10px 20px;
-            font-size: 1.2em;
-            background-color: #002D62;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    .form-section button:hover {
+        background-color: #004085;
+    }
 
-        .form-section button:hover {
-            background-color: #004085;
-        }
+    .content {
+        display: flex;
+        justify-content: space-between;
+    }
 
-        .content {
-            display: flex;
-            justify-content: space-between;
-        }
+    .left-section,
+    .right-section {
+        width: 48%;
+        background-color: #333333;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+    }
 
-        .left-section,
-        .right-section {
-            width: 48%;
-            background-color: #333333;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-        }
+    .poster img,
+    .seat-map img {
+        max-width: 100%;
+        /* 限制圖片大小 */
+        max-height: 300px;
+        /* 可根據需要調整高度 */
+        border-radius: 5px;
+    }
 
-        .poster img,
-        .seat-map img {
-            max-width: 100%;
-            /* 限制圖片大小 */
-            max-height: 300px;
-            /* 可根據需要調整高度 */
-            border-radius: 5px;
-        }
+    table {
+        width: 100%;
+        text-align: center;
+        border-collapse: collapse;
+    }
 
-        table {
-            width: 100%;
-            text-align: center;
-            border-collapse: collapse;
-        }
+    table th,
+    table td {
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        color: #ffffff;
+    }
 
-        table th,
-        table td {
-            padding: 10px;
-            border-bottom: 1px solid #ccc;
-            color: #ffffff;
-        }
+    table th {
+        background-color: #555555;
+    }
 
-        table th {
-            background-color: #555555;
-        }
+    table tr:nth-child(even) {
+        background-color: #555555;
+    }
 
-        table tr:nth-child(even) {
-            background-color: #555555;
-        }
+    table tr:nth-child(odd) {
+        background-color: #666666;
+    }
 
-        table tr:nth-child(odd) {
-            background-color: #666666;
-        }
+    .selected {
+        color: blue;
+        /* 被選擇的影廳和場次顯示為藍色 */
+    }
 
-        .selected {
-            color: blue;
-            /* 被選擇的影廳和場次顯示為藍色 */
-        }
+    .map-section {
+        margin-top: 20px;
+        text-align: center;
+    }
 
-        .map-section {
-            margin-top: 20px;
-            text-align: center;
-        }
+    .map {
+        width: 100%;
+        height: 400px;
+        /* 根據需要調整地圖的高度 */
+        border-radius: 5px;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+{% block content %}
 
-        .map {
-            width: 100%;
-            height: 400px;
-            /* 根據需要調整地圖的高度 */
-            border-radius: 5px;
-            overflow: hidden;
-        }
-    </style>
-</head>
+<div class="container">
+    <!-- 日期、戲院顯示、確認按鈕 -->
+    <div class="form-section">
+        <div class="date-box">{{ context.current_date }}</div>
+        <div class="date-box">{{ context.theater_name }}</div>
+    </div>
 
-<body>
-    <div class="container">
-        <!-- 日期、戲院顯示、確認按鈕 -->
-        <div class="form-section">
-            <div class="date-box">{{ context.current_date }}</div>
-            <div class="date-box">{{ context.theater_name }}</div>
-        </div>
-
-        <div class="content">
-            <div class="left-section">
-                <h2>{{movie_title}}</h2>
-                <div class="poster">
-                    <img src="{{ context.movie_poster_url }}" alt="Movie Poster">
-                </div>
-                <!-- Google Map 區塊 -->
-                <div class="map-section">
-                    <h2>地圖位置</h2>
-                    <div class="map">
-                        <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345097284!2d144.95373521584636!3d-37.81627997975183!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11e7b7%3A0x5045675218ceed30!2sYour%20Theater%20Name!5e0!3m2!1sen!2sau!4v1589022405921!5m2!1sen!2sau"
-                            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                    </div>
+    <div class="content">
+        <div class="left-section">
+            <h2>{{movie_title}}</h2>
+            <div class="poster">
+                <img src="{{ context.movie_poster_url }}" alt="Movie Poster">
+            </div>
+            <!-- Google Map 區塊 -->
+            <div class="map-section">
+                <h2>地圖位置</h2>
+                <div class="map">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345097284!2d144.95373521584636!3d-37.81627997975183!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11e7b7%3A0x5045675218ceed30!2sYour%20Theater%20Name!5e0!3m2!1sen!2sau!4v1589022405921!5m2!1sen!2sau"
+                        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
+        </div>
 
-            <div class="right-section">
-                <div class="session-list">
-                    <h2>場次列表</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>影廳</th>
-                                <th>場次</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for session in context.session_data %}
-                            <tr>
-                                <td
-                                    class="{% if session.room == selected_room and session.session == selected_session %}selected{% endif %}">
-                                    {{ session.room }}</td>
-                                <td
-                                    class="{% if session.room == selected_room and session.session == selected_session %}selected{% endif %}">
-                                    {{ session.session }}</td>
-                                <td>
-                                    <!-- 表单提交按钮 -->
-                                    <form method="POST">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="room" value="{{ session.room }}">
-                                        <input type="hidden" name="session" value="{{ session.session }}">
-                                        <button type="submit">选择</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="seat-map">
-                    <img src="{{ seat_map_url }}" alt="Seat Map">
-                </div>
+        <div class="right-section">
+            <div class="session-list">
+                <h2>場次列表</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>影廳</th>
+                            <th>場次</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in context.session_data %}
+                        <tr>
+                            <td
+                                class="{% if session.room == selected_room and session.session == selected_session %}selected{% endif %}">
+                                {{ session.room }}</td>
+                            <td
+                                class="{% if session.room == selected_room and session.session == selected_session %}selected{% endif %}">
+                                {{ session.session }}</td>
+                            <td>
+                                <!-- 表单提交按钮 -->
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="room" value="{{ session.room }}">
+                                    <input type="hidden" name="session" value="{{ session.session }}">
+                                    <button type="submit">选择</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="seat-map">
+                <img src="{{ seat_map_url }}" alt="Seat Map">
             </div>
         </div>
     </div>
-</body>
-
-</html>
+</div>
+{% endblock %}

@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block title %}
+搜尋電影
+{% endblock %}
 {% block style %}
 <style>
     a {
@@ -10,7 +13,14 @@
     }
 
     .movie-img {
+        display: block;
         height: 500px;
+        background-color: black;
+    }
+
+    .scrollable-content {
+        height: 300px;
+        margin: 5px;
     }
 </style>
 {% endblock %}
@@ -66,7 +76,7 @@
 
         <div class="column is-5 field has-addons">
             <div class="control">
-                <input class="input is-medium " type="text" placeholder="輸入電影關鍵字" name="movieTitle">
+                <input class="input is-medium" type="text" placeholder="輸入電影關鍵字" name="movieTitle">
             </div>
             <div class="control">
                 <button class="button is-medium is-info">搜尋</button>
@@ -88,10 +98,10 @@
         {% endif %}
         <div class="movie-info">
             <p class="title is-4">{{ movie.title }}</p>
-            <p class="content">{{ movie.info }}</p>
+            <p class="scrollable-content">{{ movie.info }}</p>
             <form action="{% url 'seats' %}">
                 <input type="hidden" name="movie_title" value="{{movie.title}}">
-                <select id="theater" name="theater">
+                <select class="select is-medium" id="theater" name="theater">
                     {% for theater in movie.theaters %}
                     <option value="{{ theater }}">{{ theater }}</option>
                     {% endfor %}

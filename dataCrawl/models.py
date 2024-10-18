@@ -27,6 +27,9 @@ class theater(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)
     cinema = models.CharField(max_length=100, blank=True, null=True)
+    img_src = models.CharField(max_length=100, blank=True, null=True)
+    info = models.CharField(max_length=500, blank=True, null=True)
+    transport = models.CharField(max_length=500, blank=True, null=True)
     address = models.CharField(max_length=100, blank=True, null=True)
     phone = models.CharField(max_length=100, null=True, blank=True)
 
