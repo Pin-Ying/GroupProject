@@ -102,6 +102,7 @@
     }
 
     .map-section {
+        height: 500px;
         margin-top: 20px;
         text-align: center;
     }
@@ -121,7 +122,7 @@
     <!-- 日期、戲院顯示、確認按鈕 -->
     <div class="form-section">
         <div class="date-box">{{ current_date }}</div>
-        <a class="date-box" href="{% url 'theaterInfo' %}?theaterID={{ theater.id }}">{{ theater_name }}</a>
+        <a class="date-box" href="{% url 'theaterInfo' %}?theaterID={{ theater.id }}">{{ theater_title }}</a>
     </div>
 
     <div class="content">
@@ -131,14 +132,7 @@
                 <img src="{{ movie_poster_url }}" alt="Movie Poster">
             </div>
             <!-- Google Map 區塊 -->
-            <div class="map-section">
-                <p class="title is-medium">地圖位置</p>
-                <div class="map">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345097284!2d144.95373521584636!3d-37.81627997975183!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11e7b7%3A0x5045675218ceed30!2sYour%20Theater%20Name!5e0!3m2!1sen!2sau!4v1589022405921!5m2!1sen!2sau"
-                        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                </div>
-            </div>
+            {% include "map.html" %}
         </div>
 
         <div class="right-section">

@@ -37,7 +37,7 @@ def theaterInfo(request):
     url=selected_row['戲院海報'].iloc[0]
     title=selected_row['戲院'].iloc[0]
 
-    return render(request,"theaterInfo/theaterInfo.html",{'cinema_groups': cinema_group_list,"tra":tra,"sj":sj,"url":url,"title":title})
+    return render(request,"theaterInfo/theaterInfo.html",{'cinema_groups': cinema_group_list,"tra":tra,"sj":sj,"url":url,"theater_title":title})
 
 
 def movieInfo(request, movieID):

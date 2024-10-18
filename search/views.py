@@ -86,7 +86,7 @@ def seats(request):
         "movie_poster_url": movie_data.img_src,
         "seat_map_url": theater_data,
         "session_data": session_data,
-        "theater_name": theater_data.name,
+        "theater_title": theater_data.name,
         "selected_room": selected_room,
         "selected_session": selected_session,
     }

@@ -1,0 +1,120 @@
+<div class="map-section">
+    <div id="estimated-time"
+        style="font-size: 1.5em; color: #333; text-align: center; padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc; border-radius: 4px;">
+        預估抵達時間: 尚未計算，請同意定位
+    </div>
+    <div id="map" style="width:100%; height:100%;"></div>
+</div>
+
+<script>
+    var map, infoWindow, userMarker, directionsService, directionsRenderer, geocoder;
+    var locations = [];  // 沒有預設地標
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 12,
+            center: { lat: 25.0330, lng: 121.5654 }  // 台北的中心位置
+        });
+
+        infoWindow = new google.maps.InfoWindow;
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(map);
+        geocoder = new google.maps.Geocoder();
+
+        // 獲取並顯示用戶的位置
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+
+                infoWindow.setPosition(pos);
+                infoWindow.setContent('您的位置');
+                infoWindow.open(map);
+                map.setCenter(pos);
+
+                if (!userMarker) {
+                    userMarker = new google.maps.Marker({
+                        position: pos,
+                        map: map,
+                        title: '您的位置'
+                    });
+                }
+
+                // 自動顯示到指定地點的路徑
+                geocodeAddress("{{theater_title}}", pos);  // 使用地理編碼找到目標地點
+            }, function () {
+                handleLocationError(true, infoWindow, map.getCenter());
+            });
+        } else {
+            // 瀏覽器不支持 Geolocation
+            handleLocationError(false, infoWindow, map.getCenter());
+        }
+    }
+
+    // 解析地址並顯示路徑
+    function geocodeAddress(address, userPos) {
+        geocoder.geocode({ 'address': address }, function (results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                var destination = results[0].geometry.location;
+                map.setCenter(destination);
+                new google.maps.Marker({
+                    position: destination,
+                    map: map,
+                    title: address
+                });
+
+                // 顯示路徑
+                calculateAndDisplayRoute(userPos, destination);
+            } else {
+                alert('無法找到地址: ' + status);
+            }
+        });
+    }
+
+    // 計算並顯示路徑
+    function calculateAndDisplayRoute(origin, destination) {
+        var request = {
+            origin: origin,
+            destination: destination,
+            travelMode: google.maps.TravelMode.DRIVING
+        };
+
+        directionsService.route(request, function (result, status) {
+            if (status === google.maps.DirectionsStatus.OK) {
+                directionsRenderer.setDirections(result);
+                const duration = result.routes[0].legs[0].duration.text;
+
+                // 更新預估行駛時間到 HTML 中的 #estimated-time
+                document.getElementById('estimated-time').innerText = '預估抵達時間: ' + duration;
+            } else {
+                alert('無法規劃路線: ' + status);
+            }
+        });
+    }
+
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        if (browserHasGeolocation) {
+            // 如果使用者拒絕存取位置，顯示指定的影城位置
+            var defaultCinemaPos = geocodeAddress("{{theater_title}}");  // 國賓長春影城的位置
+            map.setCenter(defaultCinemaPos);
+
+            // 自動顯示到指定地點的路徑 (從影城本身到影城，不會顯示路線)
+            new google.maps.Marker({
+                position: defaultCinemaPos,
+                map: map,
+                title: '{{theater_title}}'
+            });
+        } else {
+            // 瀏覽器不支持 Geolocation
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Error: Your browser doesn\'t support geolocation.');
+            infoWindow.open(map);
+        }
+    }
+</script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUY2fhxDaZmULzO5a_qWE20LxN-FTD-i8&callback=initMap">
+    </script>
