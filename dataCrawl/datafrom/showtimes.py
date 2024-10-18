@@ -4,6 +4,7 @@ import requests
 import time
 import selenium
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -12,8 +13,13 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
 )
+import random
 
+def setup_driver():
+    chrome_options = Options()
+    return webdriver.Chrome(options=chrome_options)
 
+### 電影資訊
 def scrape_all_movies():
     url = "https://www.showtimes.com.tw/programs"
     driver = webdriver.Chrome()
@@ -144,5 +150,52 @@ def scrape_all_movies():
         driver.quit()
 
 
+### 戲院資訊
+def scrape_cinema_info(url='https://www.showtimes.com.tw/info/cinema'):
+    driver = setup_driver()
+    driver.get(url)
+    
+    # 等待頁面加載
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "sc-kbdlSk"))
+    )
+    
+    # 獲取頁面源碼
+    page_source = driver.page_source
+    soup = BeautifulSoup(page_source, 'html.parser')
+    
+    # 提取影院信息
+    cinemas = []
+    cinema_divs = soup.find_all('div', class_='sc-kbdlSk fgCmbm')
+    for cinema_div in cinema_divs:
+        name = cinema_div.text.strip()
+        info_divs = cinema_div.find_next_siblings('div', class_='sc-camqpD lmjUEm')
+        location = info_divs[0].text.strip() if len(info_divs) > 0 else 'N/A'
+        phone = info_divs[1].text.strip() if len(info_divs) > 1 else 'N/A'
+        
+        cinemas.append({
+            "戲院名稱": name,
+            '影城': '秀泰影城',
+            '影城位置': location,
+            '影城電話': phone
+        })
+        
+        # 隨機延遲0.5到2秒
+        time.sleep(random.uniform(0.5, 2))
+    
+    driver.quit()
+    return pd.DataFrame(cinemas)
+
+
+
+
+
+
 if __name__ == "__main__":
     print(scrape_all_movies())
+    # 使用函數
+    url = 'https://www.showtimes.com.tw/info/cinema'
+    df = scrape_cinema_info(url)
+    print(df)
+
+    df.to_csv("sohwtimes位置.csv" ,index=False ,encoding="utf-8-sig")

@@ -206,7 +206,6 @@ def seats(request):
         session.append(m.time)
 
     m_sessions = pd.DataFrame({"room": room, "session": session})
-    print(m_sessions)
 
     session_data = m_sessions.to_dict(orient="records")
 
@@ -219,6 +218,5 @@ def seats(request):
         "selected_room": selected_room,  # 当前选择的影厅
         "selected_session": selected_session,  # 当前选择的场次
     }
-    print(movie_data.img_src)
 
-    return render(request, "ordering.html", locals())
+    return render(request, "ordering.html", {'context':context})

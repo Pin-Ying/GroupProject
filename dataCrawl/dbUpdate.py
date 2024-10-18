@@ -60,7 +60,7 @@ def theaterUpdate(datas):
     theater.objects.bulk_create(theatersData)
 
 
-def showUpdate(datas):
+def showUpdate(datas,is_limit=False):
     # 清除電影(date__lt表示小於特定日期)
     showTimeInfo.objects.filter(date__lt=today).delete()
     movies = movie.objects.all()
@@ -68,7 +68,7 @@ def showUpdate(datas):
     showDatas = []
 
     for i, data in enumerate(datas):
-        if i > 500:
+        if is_limit and i > 500:
             break
         # 加入新電影
         print(data, "Running...")
@@ -99,10 +99,9 @@ def showUpdate(datas):
 
 
 def UpdateMovies():
-    ### datas
 
-    # ### 威泰
-    # sho_movies = showtimes.scrape_all_movies()
+    ### 秀泰
+    sho_movies = showtimes.scrape_all_movies()
 
     ### 美麗華
     mir_movie = miramar.get_movie()
@@ -147,7 +146,12 @@ def UpdateShows():
     return {"result": "finish!"}
 
 
-def UpdateTheater():
+def UpdateTheater(mode=''):
+    ### 秀泰
+    df=showtimes.scrape_cinema_info()
+    datas = df.to_dict("records")
+    theaterUpdate(datas)
+
     ### 美麗華
     df = miramar.get_theater()
     datas = df.to_dict("records")
