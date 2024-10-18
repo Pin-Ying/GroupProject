@@ -93,14 +93,3 @@ def submit_comment(request):
             "comment_success.html",
             {"movie_name": movie_name, "movie_id": movie_data.id},
         )  # 成功頁面
-
-
-
-
-# 清空所有表並匯入新資料
-def import_data(request):
-    thread2 = import_reviews()
-    # import_reviews_from_csv()
-    # import_movies()
-    # import_reviews_from_csv()
-    return HttpResponse("數據導入成功")

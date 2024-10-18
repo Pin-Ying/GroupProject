@@ -21,13 +21,15 @@ def searchRequest(
         ### 資料庫讀取全部資料
         # 從電影資料查詢(電影標題、選擇螢幕)
         movie_datas = movie.objects.all()
+        cinema_datas=list(theater.objects.values_list('cinema', flat=True).distinct())
+        print(cinema_datas)
         df = pd.DataFrame([model_to_dict(movie) for movie in movie_datas])
 
         if request.method == "GET":
             searchDic = {"search": "all"}
             df = df.to_dict("records")
             datas = theaterSearch(df, searchDic) if len(df) > 0 else ""
-            return render(request, templatePage, {"movies": datas})
+            return render(request, templatePage, {"movies": datas,"cinemas":cinema_datas})
 
         search = request.POST
         searchDic = {key: search[key] for key in search if search[key] != ""}
@@ -40,7 +42,7 @@ def searchRequest(
     except Exception as e:
         print(e)
     # return render(request, templatePage,{'datas':datas})
-    return render(request, templatePage, {"movies": datas, "searchDic": searchDic})
+    return render(request, templatePage, {"movies": datas, "searchDic": searchDic,"cinemas":cinema_datas})
 
 def theaters(request):
     theaters=theater.objects.all()
@@ -79,13 +81,14 @@ def seats(request):
     session_data = m_sessions.to_dict(orient="records")
 
     context = {
+        "theater":theater_data,
         "current_date": today_text,
-        "movie_poster_url": movie_data.img_src,  # 電影url
-        "seat_map_url": theater_data,  # google map
-        "session_data": session_data,  # 场次数据
+        "movie_poster_url": movie_data.img_src,
+        "seat_map_url": theater_data,
+        "session_data": session_data,
         "theater_name": theater_data.name,
-        "selected_room": selected_room,  # 当前选择的影厅
-        "selected_session": selected_session,  # 当前选择的场次
+        "selected_room": selected_room,
+        "selected_session": selected_session,
     }
 
-    return render(request, "ordering.html", {'context':context})
+    return render(request, "search/ordering.html", context)

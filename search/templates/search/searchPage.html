@@ -13,7 +13,7 @@
     }
 
     .movie-img {
-        display: block;
+        min-height: 500px;
         height: 500px;
         background-color: black;
     }
@@ -65,10 +65,9 @@
                 <div class="select">
                     <select id="cinema" name="cinema">
                         <option value="">選擇戲院</option>
-                        <option value="威秀">威秀</option>
-                        <option value="國賓">國賓</option>
-                        <option value="美麗華">美麗華</option>
-                        <option value="秀太">秀太</option>
+                        {% for cinema in cinemas %}
+                        <option value="{{cinema}}">{{cinema}}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
