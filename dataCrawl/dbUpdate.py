@@ -1,5 +1,5 @@
 from django.db.models import Max
-from search.models import movie, theater, showTimeInfo
+from .models import movie, theater, showTimeInfo
 from .datafrom import miramar, ambassador, showtimes
 from datetime import date
 import pandas as pd

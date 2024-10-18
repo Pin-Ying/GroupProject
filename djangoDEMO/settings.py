@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "search.apps.SearchConfig",
     "user.apps.UserConfig",
-    "booking.apps.BookingConfig",
     "dataCrawl.apps.DatacrawlConfig",
+    "movieInfo.apps.MovieinfoConfig",
 ]
 
 MIDDLEWARE = [

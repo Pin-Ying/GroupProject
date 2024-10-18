@@ -1,4 +1,4 @@
-from search.models import theater,showTimeInfo
+from dataCrawl.models import theater,showTimeInfo
 from django.forms.models import model_to_dict
 import pandas as pd
 import re

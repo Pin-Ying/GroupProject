@@ -19,5 +19,6 @@ from . import views
 from django.urls import path
 
 urlpatterns = [
-    path("", views.booking_index, name="search_index"),
+    path("<int:movieID>", views.movieInfo, name="movieInfo"),
+    path("submit_comment/", views.submit_comment, name="submit_comment"),
 ]
