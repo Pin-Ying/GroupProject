@@ -3,6 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 import threading,queue
 
+datas=pd.DataFrame()
+
 movie_queue=queue.Queue()
 show_queue=queue.Queue()
 
@@ -94,6 +96,7 @@ def get_movie_and_show():
     movie_datas=pd.DataFrame(finall,columns=["電影名稱", "電影海報網址", "上或待上映","電影預告網址","影片類型","主要演員","電影介紹","電影時長","電影螢幕"])
     show_datas=pd.DataFrame(movietisr,columns=["電影名稱","影城","日期","時間", "廳位席位"])
     print('get_movie_and_show FINISH')
+    print(show_datas)
     return movie_datas,show_datas
     
 

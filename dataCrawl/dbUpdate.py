@@ -127,14 +127,16 @@ def UpdateShows():
     old_datas = old_datas.drop(columns=["title"])
     print(old_datas)
 
-    ### datas
+    ### 秀泰
+    sho_show=showtimes.scrape_show_info()
+
     ### 美麗華
     mir_show = miramar.get_showTimeInfo()
 
     ### 國賓
-    amb_movie, amb_show = ambassador.get_movie_and_show()
+    amb_movie,amb_show = ambassador.get_movie_and_show()
 
-    shows = pd.concat([mir_show, amb_show]).drop_duplicates()
+    shows = pd.concat([sho_show, mir_show, amb_show]).drop_duplicates()
     shows_unique = shows[
         ~shows[["電影名稱", "影城", "日期"]]
         .apply(tuple, axis=1)
@@ -166,8 +168,4 @@ def UpdateTheater(mode=''):
 
 
 if __name__ == "__main__":
-    df = showtimes.scrape_all_movies()
-    df = pd.concat(df, mir_movie=miramar.get_movie())
-    amb_movie, amb_show = ambassador.get_movie_and_show()
-    df = pd.concat(df, amb_movie)
-    df = df.drop_duplicates(subset=["電影名稱"])
+    pass

@@ -3,6 +3,8 @@ import requests
 from datetime import datetime
 import pandas as pd
 
+data=pd.DataFrame()
+
 def get_soup(url):
     r=requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
@@ -102,6 +104,7 @@ def get_movie():
         # total.append({"電影名稱":items[0],"電影海報網址":items[1],"上或待上映":items[2],"電影預告網址":items[3],"影片類型":items[4],"主要演員":items[5],"電影介紹":items[6],"電影時長":items[7],"電影螢幕":items[8]})
     
     data=pd.DataFrame(total,columns=["電影名稱", "電影海報網址", "上或待上映","電影預告網址","影片類型","主要演員","電影介紹","電影時長","電影螢幕"])
+    print(data)
     return data
 
 def get_showTimeInfo():
@@ -139,6 +142,7 @@ def get_showTimeInfo():
                     total.append([titles.text,"美麗華影城",date_text,time_text,rooms])
                     # total.append({"電影名稱":titles.text,"影城":"美麗華影城","日期":date_text,"時間":time_text,"廳位席位":rooms})
     data=pd.DataFrame(total,columns=["電影名稱","影城","日期","時間","廳位席位"])
+    print(data)
     return data
 
 def get_theater():
@@ -149,6 +153,6 @@ def get_theater():
     return data
 
 if __name__=="__main__":
-    print(get_movie())
+    # print(get_movie())
     print(get_showTimeInfo())
-    print(get_theater())
+    # print(get_theater())
