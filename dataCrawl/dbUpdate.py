@@ -1,6 +1,7 @@
 from django.db.models import Max
 from .models import movie, theater, showTimeInfo
-from .datafrom import miramar, ambassador, showtimes,viewshow
+from .datafrom import miramar, ambassador,viewshow
+from .datafrom import showtimes_org as showtimes
 from datetime import date
 import pandas as pd
 
@@ -66,10 +67,12 @@ def showUpdate(datas,is_limit=False):
     movies = {movie.title: movie for movie in movie.objects.all()}
     theaters = {theater.name: theater for theater in theater.objects.all()}
     showDatas = []
+    # print(movies)
+    # print(theaters)
 
     for i, data in enumerate(datas):
-        if is_limit and i > 500:
-            break
+        # if is_limit and i > 500:
+        #     break
 
         # 加入新電影
         print(data, "Running...")
@@ -80,13 +83,13 @@ def showUpdate(datas,is_limit=False):
         site = data["廳位席位"][:100]
         try:
             print(movieId)
-            movie_instance = movies.get(movieId)
-            theater_instance = theaters.get(theaterId)
+            movie_instance = movies[movieId] if movieId in movies else None
+            theater_instance = theaters[theaterId] if theaterId in theaters else None
             if not movie_instance or not theater_instance:
                 print(f"Movie or theater not found: {movieId}, {theaterId}")
                 continue
             show_data = showTimeInfo(
-                movie=movieId, theater=theaterId, date=date, time=time, site=site
+                movie=movie_instance, theater=theater_instance, date=date, time=time, site=site
             )
             if show_data in showDatas:
                 continue
@@ -109,7 +112,6 @@ def UpdateMovies():
 
     ### 美麗華
     mir_movie = miramar.get_movie()
-    # mir_show=miramar.get_showTimeInfo()
 
     ### 國賓
     amb_movie, amb_show = ambassador.get_movie_and_show()
