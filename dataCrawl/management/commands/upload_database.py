@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
         if model == 'theaters':
             self.stdout.write('UpdateTheater START...')
-            dbUpdate.UpdateTheater()
+            dbUpdate.UpdateTheater(mode='csv')
             self.stdout.write('UpdateTheater FINISH')
         
         elif model == 'movies':

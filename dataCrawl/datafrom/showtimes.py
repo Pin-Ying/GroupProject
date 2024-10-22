@@ -278,12 +278,16 @@ def scrape_show_info():
                                             })                                            
                             except Exception as e:
                                 print(f"Error with date '{date_text}': {e}")
-                                continue                            
+                                continue
+
                     except Exception as e:
                         print(f"Error with cinema '{cinema_name if 'cinema_name' in locals() else 'Unknown'}': {e}")
                         continue
-                driver.back()
-                time.sleep(3)
+                    
+                    finally:
+                        driver.back()
+                        time.sleep(3)        
+                        
 
                 # 等待主頁面重新加載
                 WebDriverWait(driver, 10).until(

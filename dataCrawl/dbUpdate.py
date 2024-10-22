@@ -1,6 +1,6 @@
 from django.db.models import Max
 from .models import movie, theater, showTimeInfo
-from .datafrom import miramar, ambassador, showtimes
+from .datafrom import miramar, ambassador, showtimes,viewshow
 from datetime import date
 import pandas as pd
 
@@ -136,7 +136,10 @@ def UpdateShows():
     ### 國賓
     amb_movie,amb_show = ambassador.get_movie_and_show()
 
-    shows = pd.concat([sho_show, mir_show, amb_show]).drop_duplicates()
+    ### 威秀
+    vie_show=viewshow.get_datas()
+
+    shows = pd.concat([sho_show, mir_show, amb_show,vie_show]).drop_duplicates()
     shows_unique = shows[
         ~shows[["電影名稱", "影城", "日期"]]
         .apply(tuple, axis=1)
@@ -149,6 +152,14 @@ def UpdateShows():
 
 
 def UpdateTheater(mode=''):
+    ### 直接用csv
+    if mode=='csv':
+        df=pd.read_csv('staticfiles/csv/theaterInfo.csv')
+        df=df.rename(columns={"戲院":"戲院名稱","地址":"影城位置","連絡電話":"影城電話"})
+        datas=df.to_dict("records")
+        theaterUpdate(datas)
+
+        return {"result": "finish!"}
     ### 秀泰
     df=showtimes.scrape_cinema_info()
     datas = df.to_dict("records")
@@ -168,4 +179,5 @@ def UpdateTheater(mode=''):
 
 
 if __name__ == "__main__":
+    # UpdateTheater(mode='csv')
     pass

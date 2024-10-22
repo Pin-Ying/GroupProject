@@ -47,8 +47,8 @@
 <body class="theme-dark">
 
     <div class="box center">
-        <div class="title" style="flex: 1; border: none; background-color: transparent; color: white; cursor: pointer;"
-            onclick="window.location.href='2.html';">宏碁專案電影整合</div>
+        <a class="title" style="flex: 1; border: none; background-color: transparent; color: white; cursor: pointer;"
+            href="{% url 'search_index' %}">宏碁專案電影整合</a>
     </div>
     <div class="columns is-vcentered">
         <a class="column button is-medium" href="{% url 'search_index' %}">搜尋電影</a>
