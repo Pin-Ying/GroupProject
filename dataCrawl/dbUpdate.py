@@ -63,13 +63,14 @@ def theaterUpdate(datas):
 def showUpdate(datas,is_limit=False):
     # 清除電影(date__lt表示小於特定日期)
     showTimeInfo.objects.filter(date__lt=today).delete()
-    movies = movie.objects.all()
-    theaters = theater.objects.all()
+    movies = {movie.title: movie for movie in movie.objects.all()}
+    theaters = {theater.name: theater for theater in theater.objects.all()}
     showDatas = []
 
     for i, data in enumerate(datas):
         if is_limit and i > 500:
             break
+
         # 加入新電影
         print(data, "Running...")
         movieId = data["電影名稱"]
@@ -79,8 +80,11 @@ def showUpdate(datas,is_limit=False):
         site = data["廳位席位"][:100]
         try:
             print(movieId)
-            movieId = movies.get(title=movieId)
-            theaterId = theaters.get(name=theaterId)
+            movie_instance = movies.get(movieId)
+            theater_instance = theaters.get(theaterId)
+            if not movie_instance or not theater_instance:
+                print(f"Movie or theater not found: {movieId}, {theaterId}")
+                continue
             show_data = showTimeInfo(
                 movie=movieId, theater=theaterId, date=date, time=time, site=site
             )
