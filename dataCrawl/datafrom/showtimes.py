@@ -140,7 +140,7 @@ def scrape_all_movies():
         # 遍歷每個電影連結
         running=0
         for i in range(total_movies):
-            if running>=5:
+            if running>=3:
                 for thread in threads[i-running:i]:
                     thread.join()
                     running=0
@@ -287,7 +287,7 @@ def scrape_show_info():
         # 遍歷每個電影連結
         running=0
         for i in range(total_movies):
-            if running>=5:
+            if running>=3:
                 for thread in threads[i-running:i]:
                     thread.join()
                     running=0

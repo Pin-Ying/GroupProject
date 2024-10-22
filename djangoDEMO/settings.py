@@ -78,13 +78,13 @@ WSGI_APPLICATION = "djangoDEMO.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        # "NAME": BASE_DIR / "db.sqlite3",
-        "NAME": os.environ.get("DATABASE_URL", BASE_DIR / "db.sqlite3"),
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         # "NAME": BASE_DIR / "db.sqlite3",
+#         "NAME": os.environ.get("DATABASE_URL", BASE_DIR / "db.sqlite3"),
+#     }
+# }
 
 # DATABASES = {
 #     "default": {
@@ -100,19 +100,19 @@ DATABASES = {
 #     }
 # }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.mysql",
-#         "NAME": "ynhd1va580isryw8",
-#         "USER": "qk5uybwfz8htfj2a",
-#         "PASSWORD": "tngspuyjcxetc7jl",
-#         "HOST": "r4919aobtbi97j46.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
-#         "PORT": "3306",
-#         "OPTIONS": {
-#             "init_command": "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'",
-#         },
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "m457njoy2xz7xt5t",
+        "USER": "tvfkxkzjf34cx436",
+        "PASSWORD": "bkcncpf2slm4gb6m",
+        "HOST": "q57yawiwmnaw13d2.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+        "PORT": "3306",
+        "OPTIONS": {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'",
+        },
+    }
+}
 
 
 # Password validation
