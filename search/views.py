@@ -16,6 +16,7 @@ def searchRequest(
 ):
     searchDic = ""
     datas = ""
+    cinema_datas=""
 
     try:
         ### 資料庫讀取全部資料

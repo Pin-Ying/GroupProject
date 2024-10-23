@@ -297,7 +297,7 @@ def scrape_show_info():
                 print(f"處理電影時發生錯誤: {str(e)}")
 
             finally:
-                driver.back()
+                driver.get(url)
                 time.sleep(3)
                 # 等待主頁面重新加載
                 WebDriverWait(driver, 10).until(
