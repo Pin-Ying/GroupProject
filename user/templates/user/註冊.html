@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <title>註冊頁面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px 20px;
+            /* Increased padding for double height */
+            text-align: center;
+            /* Center align all text in header */
+            display: flex;
+            justify-content: space-between;
+        }
+
+        header button {
+            flex: 1;
+            border: none;
+            background-color: transparent;
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <header
+        style="background-color: #333; color: #fff; padding: 20px 20px; text-align: center; display: flex; justify-content: space-between;">
+        <button
+            style="flex: 1; border: none; background-color: transparent; color: white; cursor: pointer; font-size: 30px;"
+            onclick="window.location.href='/2/';">宏碁專案電影整合</button>
+    </header>
+    <div class="container">
+        <h2>註冊</h2>
+        <form method="POST" action="{% url 'register' %}">
+            {% csrf_token %}
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}" {% endif %} style="color: red;">
+                    {{ message }}
+                    {% endfor %}
+            </ul>
+            {% endif %}
+            <div class="form-group">
+                <label for="name">使用者名稱</label>
+                <input type="text" id="name" name="name" value="{{ name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="account">帳號</label>
+                <input type="text" id="account" name="account" value="{{ account }}" required>
+                <small>帳號必須至少包含 6 個字元，並且只能包含字母和數字。</small>
+            </div>
+            <div class="form-group">
+                <label for="password">密碼</label>
+                <input type="password" id="password" name="password" value="{{ password }}" required>
+                <small>密碼必須包含至少 8 個字元，且包括一個大寫字母、一個小寫字母和一個數字。</small>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">再次確認密碼</label>
+                <input type="password" id="confirm_password" name="confirm_password" value="{{ confirm_password }}"
+                    required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="{{ email }}" required>
+            </div>
+            <div class="form-group">
+                <label for="love">喜好電影類型</label>
+                <select id="love" name="love" value="{{ love }}" required>
+                    <!-- 這裡的選項將會由後端動態傳遞 -->
+                    <option value="">請選擇電影類型</option>
+                    {% for genre in genres %}
+                    <option value="{{ genre }}" {% if genre==genre %}selected{% endif %}>{{ genre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <button type="submit">註冊</button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

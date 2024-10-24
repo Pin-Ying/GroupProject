@@ -78,13 +78,13 @@ WSGI_APPLICATION = "djangoDEMO.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         # "NAME": BASE_DIR / "db.sqlite3",
-#         "NAME": os.environ.get("DATABASE_URL", BASE_DIR / "db.sqlite3"),
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        # "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": os.environ.get("DATABASE_URL", BASE_DIR / "db.sqlite3"),
+    }
+}
 
 # DATABASES = {
 #     "default": {
@@ -100,19 +100,19 @@ WSGI_APPLICATION = "djangoDEMO.wsgi.application"
 #     }
 # }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "m457njoy2xz7xt5t",
-        "USER": "tvfkxkzjf34cx436",
-        "PASSWORD": "bkcncpf2slm4gb6m",
-        "HOST": "q57yawiwmnaw13d2.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
-        "PORT": "3306",
-        "OPTIONS": {
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'",
-        },
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "m457njoy2xz7xt5t",
+#         "USER": "tvfkxkzjf34cx436",
+#         "PASSWORD": "bkcncpf2slm4gb6m",
+#         "HOST": "q57yawiwmnaw13d2.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+#         "PORT": "3306",
+#         "OPTIONS": {
+#             "init_command": "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'",
+#         },
+#     }
+# }
 
 
 # Password validation
@@ -152,9 +152,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    "/var/www/static/",
+]
 django_heroku.settings(locals())
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+### 快取
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "/var/tmp/django_cache",
+    }
+}

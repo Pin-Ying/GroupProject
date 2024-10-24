@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>CodePen - From Dribbble to Bootstrap</title>
+	<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.3/css/bootstrap.min.css'>
+	<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.2.0/css/all.min.css'>
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+</head>
+
+<body>
+	<!-- partial:index.partial.html -->
+
+	<body id="page-top">
+		<nav class="navbar navbar-expand static-top filmeson-nav sticky-top">
+			<button style="margin-left:10px;" class="btn btn-link btn-sm text-secondary order-2 order-sm-0"
+				id="sidebarToggle">
+				<i class="fas fa-bars"></i>
+			</button>
+			<a class="navbar-brand mr-1" style="margin-left:10px;" href="#">MOVIBAZAR</a>
+			<!-- Navbar Search -->
+			<form id="form"
+				class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-5 my-2 my-md-0 filmeson-navbar-search">
+				<div class="input-group">
+					<input type="text" id="search" class="form-control" placeholder="Find what you want...">
+				</div>
+			</form>
+		</nav>
+		<div id="wrapper">
+			<!-- Sidebar -->
+			<ul class="sidebar navbar-nav">
+				<li class="nav-item active">
+					<a class="nav-link" href="#">
+						<i class="fas fa-fw fa-home"></i>
+						<span>Home</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">
+						<i class="fas fa-fw fa-film"></i>
+						<span>Movies</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">
+						<i class="fas fa-fw fa-desktop"></i>
+						<span>TV Shows</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">
+						<i class="fas fa-fw fa-trophy"></i>
+						<span>Top</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">
+						<i class="fas fa-fw fa-random"></i>
+						<span>Random</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">
+						<i class="fas fa-fw fa-heart"></i>
+						<span>Favorites</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">
+						<i class="fas fa-fw fa-history"></i>
+						<span>History</span>
+					</a>
+				</li>
+				<li class="nav-item channel-sidebar-list">
+					<h6>Latest comments</h6>
+					<ul>
+						<li>
+							<a href="subscriptions.html">
+								<img class="img-fluid" alt="" src="https://i.imgur.com/XvmGh3g.png"> Anna
+							</a>
+						</li>
+						<li>
+							<a href="subscriptions.html">
+								<img class="img-fluid" alt="fr0zen" src="https://i.imgur.com/L9YRHsQ.png"> fr0zen <span
+									class="badge badge-warning">3</span>
+							</a>
+						</li>
+						<li>
+							<a href="subscriptions.html">
+								<img class="img-fluid" alt="" src="https://i.imgur.com/ugb73qe.png"> Gloria
+							</a>
+						</li>
+						<li>
+							<a href="subscriptions.html">
+								<img class="img-fluid" alt="" src="https://i.imgur.com/hkPip7F.png"> Abdul
+							</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+			<div id="content-wrapper">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-lg-3 top-mobile-search">
+							<div class="form-group">
+								<!--<label for="e3">Genre</label>-->
+								<input type="text" placeholder="Search for..." class="form-control">
+							</div>
+						</div>
+						<div class="col-lg-3">
+							<div class="form-group">
+								<!--<label for="e3">Genre</label>-->
+								<select id="e3" class="custom-select">
+									<option>Genre</option>
+									<option>Action</option>
+									<option>Adventure</option>
+									<option>Animation</option>
+									<option>more...</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-lg-3">
+							<div class="form-group">
+								<!--<label for="e4">Year</label>-->
+								<select id="e4" class="custom-select">
+									<option>Year</option>
+									<option>2022</option>
+									<option>2023</option>
+									<option>2024</option>
+									<option>more...</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-lg-3">
+							<div class="form-group">
+								<!--<label for="e5">Country</label>-->
+								<select id="e5" class="custom-select">
+									<option>Country</option>
+									<option>Italy</option>
+									<option>Spain</option>
+									<option>Canada</option>
+									<option>more...</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-lg-3">
+							<div class="form-group">
+								<!--<label for="e6">Sort By</label>-->
+								<select id="e6" class="custom-select">
+									<option>Sort By</option>
+									<option>Views</option>
+									<option>Rating</option>
+									<option>Date</option>
+									<option>Title</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<br>
+					<div class="video-block section-padding">
+						<div class="row" id="porco">
+
+						</div>
+						<nav aria-label="Page navigation example">
+							<ul class="pagination justify-content-center pagination-sm mb-0">
+								<li class="page-item disabled">
+									<a tabindex="-1" href="#" class="page-link">Previous</a>
+								</li>
+								<li class="page-item active"><a href="#" class="page-link">1</a></li>
+								<li class="page-item"><a href="#" class="page-link">2</a></li>
+								<li class="page-item"><a href="#" class="page-link">3</a></li>
+								<li class="page-item">
+									<a href="#" class="page-link">Next</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-wrapper -->
+		</div>
+		<!-- partial -->
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.3/js/bootstrap.bundle.min.js'></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js'></script>
+		<script src="{% static 'js/script.js' %}"></script>
+
+	</body>
+
+</html>

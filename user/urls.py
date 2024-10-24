@@ -23,5 +23,6 @@ urlpatterns = [
     path("", views.user_profile, name="profile"),
     path("login/", views.user_login, name="login"),
     path("register/", views.user_register, name="register"),
+    # path("a4/", views.a4, name="a4"),
     path("logout/", views.user_logout, name="logout"),
 ]

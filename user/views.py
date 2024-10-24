@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.db import models
 
 # from django.http import HttpResponse
 
@@ -43,7 +44,7 @@ def user_login(request):
 def user_register(request):
     form = UserCreationForm()
     msg = ""
-    
+
     if request.method == "POST":
         print(request.POST)
         username = request.POST.get("username")
@@ -72,3 +73,8 @@ def user_register(request):
                 return redirect("search_index")
 
     return render(request, "user/register.html", {"form": form, "msg": msg})
+
+
+# def a4(request):
+#     genres = Movie.objects.values_list('genre', flat=True).distinct()
+#     return render(request,'4.html',{"genres":genres})
