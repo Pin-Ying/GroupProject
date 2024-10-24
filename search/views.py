@@ -18,7 +18,6 @@ def test(request):
 def searchRequest(
     request, methods=["GET", "POST"], templatePage="search/searchPage.html"
 ):
-
     searchDic = ""
     datas = ""
     cinema_datas = ""
@@ -53,7 +52,12 @@ def searchRequest(
     return render(
         request,
         templatePage,
-        {"movies": datas, "searchDic": searchDic, "cinemas": cinema_datas},
+        {
+            "movies": datas,
+            "searchDic": searchDic,
+            "cinemas": cinema_datas,
+            "today": today,
+        },
     )
 
 
@@ -81,12 +85,12 @@ def seats(request):
         # selected_session = request.POST.get("session")
     movie_data = movie.objects.get(title=movie_title)
     theater_data = theater.objects.get(name=theater_name)
-
     show_data = showTimeInfo.objects.filter(
         movie=movie_data,
         theater=theater_data,
         date=today,
     )
+
     room = []
     session = []
     for m in show_data:
