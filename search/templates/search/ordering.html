@@ -121,9 +121,18 @@
 <div class="container">
     <!-- 日期、戲院顯示、確認按鈕 -->
     <div class="form-section">
-        <div class="date-box">{{ current_date }}</div>
+        <select class="date-box" name="movie_date" id="movie_date" onchange="recordSelection()">
+            {% for date in dates %}
+            {% if date == current_date %}
+            <option value="{{date}}" selected>{{date}}</option>
+            {% else %}
+            <option value="{{date}}">{{date}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
         <a class="date-box" href="{% url 'theaterInfo' %}?theaterID={{ theater.id }}">{{ theater_title }}</a>
     </div>
+
 
     <div class="content">
         <div class="left-section">
@@ -175,4 +184,22 @@
         </div>
     </div>
 </div>
+<script>
+    function recordSelection() {
+        var movie_date = document.getElementById('movie_date').value;
+        fetch("{% url 'seats' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ "select_day": movie_date }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
 {% endblock %}

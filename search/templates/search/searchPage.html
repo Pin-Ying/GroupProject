@@ -73,7 +73,9 @@
             </div>
         </div>
         <div class="column">
-            <input type="date" data-start-date="{{today}}" value="{{today}}">
+            <div class="control">
+                <input class="input" type="date" name="date" min="{{dayStart}}" max="{{dayEnd}}" value="{{select_day}}">
+            </div>
         </div>
 
         <div class="column is-5 field has-addons">
@@ -101,8 +103,10 @@
         <div class="movie-info">
             <p class="title is-4">{{ movie.title }}</p>
             <p class="scrollable-content">{{ movie.info }}</p>
-            <form action="{% url 'seats' %}">
+            <form action="{% url 'seats' %}" method="get">
+                {% csrf_token %}
                 <input type="hidden" name="movie_title" value="{{movie.title}}">
+                <input type="hidden" name="select_day" value="{{select_day}}">
                 <select class="select is-medium" id="theater" name="theater">
                     {% for theater in movie.theaters %}
                     <option value="{{ theater }}">{{ theater }}</option>

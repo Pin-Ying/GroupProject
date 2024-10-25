@@ -1,14 +1,21 @@
 from django.shortcuts import render
 from django.forms.models import model_to_dict
+from django.db.models import Max
 from dataCrawl.models import movie, showTimeInfo, theater
 from search.searchMethod import movieSearch, theaterSearch
+from datetime import datetime
 import pandas as pd
-from datetime import date
+import json
+
 
 # test 123456789
 # Create your views here.
-today = date.today()
+today = datetime.today()
 today_text = today.strftime("%m月%d日")
+dayStart=today.strftime("%Y-%m-%d")
+# dayEnd=today + timedelta(days=7)
+dayEnd=showTimeInfo.objects.aggregate(Max('date'))['date__max']
+dayEnd=dayEnd.strftime("%Y-%m-%d")
 
 
 def test(request):
@@ -31,11 +38,12 @@ def searchRequest(
         df = pd.DataFrame([model_to_dict(movie) for movie in movie_datas])
 
         if request.method == "GET":
-            searchDic = {"search": "all"}
+            searchDic = {"search": "all","date":dayStart}
             df = df.to_dict("records")
             datas = theaterSearch(df, searchDic) if len(df) > 0 else ""
             return render(
-                request, templatePage, {"movies": datas, "cinemas": cinema_datas}
+                request, templatePage, {"movies": datas, "cinemas": cinema_datas,"dayStart": dayStart,
+            "dayEnd":dayEnd,'select_day':dayStart}
             )
 
         search = request.POST
@@ -56,7 +64,9 @@ def searchRequest(
             "movies": datas,
             "searchDic": searchDic,
             "cinemas": cinema_datas,
-            "today": today,
+            "dayStart": dayStart,
+            "dayEnd":dayEnd,
+            'select_day':searchDic['date'],
         },
     )
 
@@ -70,26 +80,33 @@ def theaters(request):
         {"theaters": theaters, "cinemas": cinema_list},
     )
 
-
 def seats(request):
-    movie_title = request.GET.get("movie_title")
-    theater_name = request.GET.get("theater")
     selected_room = ""
     selected_session = ""
+    movie_title=""
+    theater_name=""
 
-    # 检查表单提交的影厅和场次信息
-    if request.method == "POST":
-        movie_title = request.POST.get("movie_title")
-        theater_name = request.POST.get("theater")
+    if request.method == "GET":
+        request.session['movie_title'] = movie_title = request.GET["movie_title"]
+        request.session['theater_name'] = theater_name = request.GET["theater"]
+        select_day= request.GET["select_day"]
+        select_day=datetime.strptime(select_day, '%Y-%m-%d').date()
+    
+    ### 日期變動
+    if request.method=='POST':
+        data = json.loads(request.body)
+        select_day = data.get("select_day")
+        select_day=datetime.strptime(select_day, '%Y年%m月%d日').date()
+        print('select_day:',select_day)
+
+        movie_title=request.session['movie_title']
+        theater_name=request.session['theater_name']
         # selected_room = request.POST.get("room")
         # selected_session = request.POST.get("session")
     movie_data = movie.objects.get(title=movie_title)
     theater_data = theater.objects.get(name=theater_name)
-    show_data = showTimeInfo.objects.filter(
-        movie=movie_data,
-        theater=theater_data,
-        date=today,
-    )
+    dates=showTimeInfo.objects.filter(movie=movie_data,theater=theater_data).values_list('date',flat=True).distinct()
+    show_data = showTimeInfo.objects.filter(movie=movie_data,theater=theater_data,date=select_day)
 
     room = []
     session = []
@@ -103,7 +120,8 @@ def seats(request):
 
     context = {
         "theater": theater_data,
-        "current_date": today_text,
+        "dates": dates,
+        "current_date": select_day,
         "movie_poster_url": movie_data.img_src,
         "seat_map_url": theater_data,
         "session_data": session_data,

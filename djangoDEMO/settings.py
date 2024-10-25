@@ -163,10 +163,5 @@ django_heroku.settings(locals())
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-### 快取
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
-        "LOCATION": "/var/tmp/django_cache",
-    }
-}
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'

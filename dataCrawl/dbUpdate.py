@@ -4,6 +4,15 @@ from .datafrom import miramar, ambassador,viewshow,showtimes
 # from .datafrom import showtimes_org as showtimes
 from datetime import date
 import pandas as pd
+import re
+
+def extract_valid_times(input_string):
+    # 定義正規表示式
+    pattern = r'(?<!\d)(?:[01]\d|2[0-3]):[0-5]\d(?!\d)'
+    
+    # 使用 re.findall 提取所有符合格式的部分
+    valid_times = re.search(pattern, input_string)
+    return valid_times
 
 today = date.today()
 
@@ -80,6 +89,7 @@ def showUpdate(datas,is_limit=False):
         theaterId = data["影城"]
         date = data["日期"][:100]
         time = data["時間"][:100]
+        time = extract_valid_times(time)
         site = data["廳位席位"][:100]
         try:
             print(movieId)

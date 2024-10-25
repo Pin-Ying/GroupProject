@@ -1,6 +1,7 @@
 from dataCrawl.models import theater,showTimeInfo
 from django.forms.models import model_to_dict
 import pandas as pd
+from datetime import datetime
 import re
 
 """
@@ -19,6 +20,10 @@ import re
 
 最終以 datas 回傳給 html
 """
+
+today=datetime.now().date()
+today=today.strftime("%Y-%m-%d")
+now=datetime.now().time()
 
 
 def movieSearch(df, searchDic, screens=["Imax", "3D", "數位"]):
@@ -94,7 +99,7 @@ areas = {
 cinema = ["威秀", "國賓", "美麗華", "秀太"]
 
 
-### 預想：待功能完成，帶入movieSearch篩選的結果，在電影的datas出來時直接帶入datas
+### 篩選影城，包括日期
 def theaterSearch(datas, searchDic):
 
     # 影城資料
@@ -133,6 +138,18 @@ def theaterSearch(datas, searchDic):
     )
     movietisr = movietisr.dropna(subset=["theater"])
 
+    # 篩出特定日期、時間(如果日期為當日)的電影
+    if "date" in searchDic:
+        movietisr["date"]=movietisr["date"].map(
+        lambda x: x if str(x)==searchDic['date'] else None
+    )
+        movietisr = movietisr.dropna(subset=["date"])
+        if searchDic['date']==today:
+            movietisr["time"]=movietisr["time"].map(
+            lambda x: x if datetime.strptime(x, "%H:%M").time()>now else None
+        )
+            movietisr = movietisr.dropna(subset=["time"])
+
     results = []
     for data in datas:
         movieSet = set(movietisr["movie"])
@@ -149,14 +166,16 @@ def theaterSearch(datas, searchDic):
     return results
 
 
+
 if __name__ == "__main__":
-    searchDic = {
-        "csrfmiddlewaretoken": "7BIruF9y3jyO8ZYGEJG44mcrehZROhif1N9Xij04WRpclO2F0wL6vVU1Yu3hwfcq",
-        "movieTitle": "小丑",
-        "數位": "on",
-        "area": "north",
-        "cinema": "國賓",
-    }
+    print(now)
+    # searchDic = {
+    #     "csrfmiddlewaretoken": "7BIruF9y3jyO8ZYGEJG44mcrehZROhif1N9Xij04WRpclO2F0wL6vVU1Yu3hwfcq",
+    #     "movieTitle": "小丑",
+    #     "數位": "on",
+    #     "area": "north",
+    #     "cinema": "國賓",
+    # }
     # searchDic = {
     #     "csrfmiddlewaretoken": "7BIruF9y3jyO8ZYGEJG44mcrehZROhif1N9Xij04WRpclO2F0wL6vVU1Yu3hwfcq"
     # }
