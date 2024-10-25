@@ -1,7 +1,7 @@
 from django.db.models import Max
 from .models import movie, theater, showTimeInfo
-from .datafrom import miramar, ambassador,viewshow
-from .datafrom import showtimes_org as showtimes
+from .datafrom import miramar, ambassador,viewshow,showtimes
+# from .datafrom import showtimes_org as showtimes
 from datetime import date
 import pandas as pd
 

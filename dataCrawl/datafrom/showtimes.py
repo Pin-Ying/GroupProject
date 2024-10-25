@@ -18,7 +18,7 @@ data=pd.DataFrame()
 
 def setup_driver():
     chrome_options = Options()
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     chrome_options.add_argument("--headless") #無頭模式
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
@@ -110,6 +110,7 @@ def scrape_one_movies(i,total_movies):
         
     except Exception as e:
         print(f"抓取數據時發生錯誤: {str(e)}")
+        return
 
     finally:
         driver.close()
@@ -210,6 +211,8 @@ def scrape_one_info(i,total_movies):
                 )
                 driver.execute_script("arguments[0].scrollIntoView(true);", cinema)     
                 cinema_name = cinema.text
+                if cinema_name=='更多…':
+                    continue
                 
                 driver.execute_script("arguments[0].click();", cinema)
 
