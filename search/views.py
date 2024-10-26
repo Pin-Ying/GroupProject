@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.forms.models import model_to_dict
 from django.db.models import Max
+from django.utils import timezone
 from dataCrawl.models import movie, showTimeInfo, theater
 from search.searchMethod import movieSearch, theaterSearch
 from datetime import datetime
@@ -11,6 +12,7 @@ import json
 # test 123456789
 # Create your views here.
 today = datetime.today()
+today=timezone.make_aware(today)
 today_text = today.strftime("%m月%d日")
 dayStart=today.strftime("%Y-%m-%d")
 # dayEnd=today + timedelta(days=7)
