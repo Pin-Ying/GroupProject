@@ -56,20 +56,32 @@
         <a class="column button is-medium" href="{% url 'search_index' %}">搜尋電影</a>
         <a class="column button is-medium" href="{% url 'theaters' %}">劇院資料</a>
 
-        {% if user.is_authenticated %}
-        <a class="column" href="{% url 'profile' %}"><span class="username">使用者: {{user.username}}</span></a>
-        <a class="button column" href="{% url 'logout' %}">登出</a>
+        {% if username %}
+        <a href="{% url 'recommend' %}" class="column botton">推薦</a>
+        <p class="column content">歡迎, {{ username }}!</p>
+        <a href="{% url 'logout' %}" class="column button">登出</a>
+
         {% else %}
-        <a class="button is-medium column" href="{% url 'register' %}">註冊</a>
+        <a class="button is-medium column" href="{% url 'register_new' %}">註冊</a>
         <form class="login-form column columns" action="{% url 'login' %}" method="post">
             {% csrf_token %}
-            <input type="text" class="column" name="username" id="id-username" value="{{username}}" placeholder="帳號">
-            <input type="password" class="column" name="password" id="id-password" placeholder="密碼">
+            <input type="text" class="column" name="account" id="account" value="{{account}}" placeholder="帳號">
+            <input type="password" class="column" name="password" id="password" placeholder="密碼">
             <input type="submit" class="column button is-medium" name="login" id="" value="登入">
         </form>
         {% endif %}
     </div>
     <div>{{msg}}</div>
+    <script>
+        sessionStorage.setItem('username', 'JohnDoe');
+        const username = sessionStorage.getItem('username');
+
+        if (username) {
+            console.log('Username 資料存在:', username);
+        } else {
+            console.log('Username 資料不存在。');
+        }
+    </script>
     {% block content %}
 
     {% endblock %}

@@ -4,11 +4,13 @@ from django.db.models.functions import Length
 from django.http import HttpResponse
 import random
 import pandas as pd
-from dataCrawl.models import movie, showTimeInfo, theater, Review
+from dataCrawl.models import movie, showTimeInfo, theater, Review, Click, User
 from dataCrawl.comments import import_reviews
+from datetime import datetime
 
 # Create your views here.
 def theaterInfo(request):
+    username=request.session['username'] if 'username' in request.session else None
     data=pd.read_csv("staticfiles/csv/theaterInfo.csv",encoding="utf-8")
 
     cinema_groups = {}
@@ -37,10 +39,22 @@ def theaterInfo(request):
     url=selected_row['戲院海報'].iloc[0]
     title=selected_row['戲院'].iloc[0]
 
-    return render(request,"theaterInfo/theaterInfo.html",{'cinema_groups': cinema_group_list,"tra":tra,"sj":sj,"url":url,"theater_title":title})
+    return render(request,"theaterInfo/theaterInfo.html",{'cinema_groups': cinema_group_list,"tra":tra,"sj":sj,"url":url,"theater_title":title,"username":username})
 
 
 def movieInfo(request, movieID):
+    username = None
+    if 'username' in request.session:
+        username = request.session['username']
+        user = User.objects.get(name=username)
+        user_id = user.id
+        print(user_id+1)
+        print(movieID)
+        # 3. 查詢點擊的電影類型
+        movies = movie.objects.get(id=movieID)
+        movie_id = movies.id  #
+        Click.objects.create(user_id=user_id, movie_id=movie_id,clicked_at=datetime.now())
+        print(username)
     # import_reviews_from_csv()
     movie_data = movie.objects.get(id=movieID)
     show_data = showTimeInfo.objects.filter(movie=movieID)
@@ -76,10 +90,13 @@ def movieInfo(request, movieID):
             "showInfo": show_data,
             "random_comment": random_comment,
             "movie_Comment": list(sorted_comments),
+            'username':username
+            
         },
     )
 
 def submit_comment(request):
+    username=request.session['username'] if 'username' in request.session else None
     if request.method == "POST":
         movie_name = request.POST.get("movie-name")
         comment = request.POST.get("comment")
@@ -91,5 +108,5 @@ def submit_comment(request):
         return render(
             request,
             "comment_success.html",
-            {"movie_name": movie_name, "movie_id": movie_data.id},
+            {"movie_name": movie_name, "movie_id": movie_data.id,"username":username},
         )  # 成功頁面

@@ -8,7 +8,6 @@ from datetime import datetime,timedelta
 import pandas as pd
 import json
 
-
 # test 123456789
 # Create your views here.
 today = datetime.today()
@@ -27,14 +26,23 @@ def test(request):
 def searchRequest(
     request, methods=["GET", "POST"], templatePage="search/searchPage.html"
 ):
+    msg=""
     searchDic = ""
     datas = ""
     cinema_datas = ""
+    if 'msg' in request.session:
+        msg=request.session['msg']
+        del request.session['msg']
+
+    username=request.session['username'] if 'username' in request.session else None
 
     try:
         ### 資料庫讀取全部資料
         # 從電影資料查詢(電影標題、選擇螢幕)
         movie_datas = movie.objects.all()
+        if 'recommended_movie' in request.session:
+            recommended_movie=request.session['recommended_movie']
+            movie_datas = movie.objects.filter(title__in=recommended_movie)
         cinema_datas = list(theater.objects.values_list("cinema", flat=True).distinct())
         print(cinema_datas)
         df = pd.DataFrame([model_to_dict(movie) for movie in movie_datas])
@@ -45,7 +53,7 @@ def searchRequest(
             datas = theaterSearch(df, searchDic) if len(df) > 0 else ""
             return render(
                 request, templatePage, {"movies": datas, "cinemas": cinema_datas,"dayStart": dayStart,
-            "dayEnd":dayEnd,'select_day':dayStart}
+            "dayEnd":dayEnd,'select_day':dayStart,"msg":msg,"username":username}
             )
 
         search = request.POST
@@ -68,20 +76,24 @@ def searchRequest(
             "dayStart": dayStart,
             "dayEnd":dayEnd,
             'select_day':searchDic['date'],
+            "msg":msg,
+            "username":username
         },
     )
 
 
 def theaters(request):
+    username=request.session['username'] if 'username' in request.session else None
     theaters = theater.objects.all()
     cinema_list = list(set(theater.cinema for theater in theaters))
     return render(
         request,
         "search/theaterPage.html",
-        {"theaters": theaters, "cinemas": cinema_list},
+        {"theaters": theaters, "cinemas": cinema_list, 'username':username},
     )
 
 def seats(request):
+    username=request.session['username'] if 'username' in request.session else None
     selected_room = ""
     selected_session = ""
     movie_title=""
@@ -129,6 +141,7 @@ def seats(request):
         "theater_title": theater_data.name,
         "selected_room": selected_room,
         "selected_session": selected_session,
+        'username':username
     }
 
     return render(request, "search/ordering.html", context)

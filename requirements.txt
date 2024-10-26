@@ -6,6 +6,7 @@ myapp==0.1dev
 pandas==2.2.3
 Requests==2.32.3
 selenium==4.25.0
+scikit-learn==1.5.2
 gunicorn
 mysqlclient
 dj-database-url

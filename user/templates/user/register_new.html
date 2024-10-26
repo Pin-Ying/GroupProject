@@ -127,8 +127,12 @@
                 <select id="love" name="love" value="{{ love }}" required>
                     <!-- 這裡的選項將會由後端動態傳遞 -->
                     <option value="">請選擇電影類型</option>
-                    {% for genre in genres %}
-                    <option value="{{ genre }}" {% if genre==genre %}selected{% endif %}>{{ genre }}</option>
+                    {% for type in movie_type %}
+                    {% if type == love %}
+                    <option value="{{ type }}" selected>{{ type }}</option>
+                    {% else %}
+                    <option value="{{ type }}">{{ type }}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
             </div>
