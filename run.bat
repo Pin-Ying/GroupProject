@@ -1,3 +1,5 @@
+cd C:\Users\Pinling\OneDrive\Desktop\Python\Alvin C\GroupProject
+
 python manage.py upload_database --model movies
 
 python manage.py upload_database --model shows

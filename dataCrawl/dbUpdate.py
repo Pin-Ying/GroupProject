@@ -1,8 +1,8 @@
-from django.db.models import Max
+from django.utils import timezone
 from .models import movie, theater, showTimeInfo
 from .datafrom import miramar, ambassador,viewshow,showtimes
 # from .datafrom import showtimes_org as showtimes
-from datetime import date
+from datetime import datetime
 import pandas as pd
 import re
 
@@ -14,7 +14,8 @@ def extract_valid_times(input_string):
     valid_times = re.search(pattern, input_string)
     return valid_times
 
-today = date.today()
+today = datetime.today()
+today=timezone.make_aware(today)
 
 
 def movieUpdate(datas):

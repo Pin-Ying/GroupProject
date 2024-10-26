@@ -4,7 +4,7 @@ from django.db.models import Max
 from django.utils import timezone
 from dataCrawl.models import movie, showTimeInfo, theater
 from search.searchMethod import movieSearch, theaterSearch
-from datetime import datetime
+from datetime import datetime,timedelta
 import pandas as pd
 import json
 
@@ -17,7 +17,7 @@ today_text = today.strftime("%m月%d日")
 dayStart=today.strftime("%Y-%m-%d")
 # dayEnd=today + timedelta(days=7)
 dayEnd=showTimeInfo.objects.aggregate(Max('date'))['date__max']
-dayEnd=dayEnd.strftime("%Y-%m-%d")
+dayEnd=dayEnd.strftime("%Y-%m-%d") if dayEnd else today + timedelta(days=7)
 
 
 def test(request):
@@ -40,7 +40,7 @@ def searchRequest(
         df = pd.DataFrame([model_to_dict(movie) for movie in movie_datas])
 
         if request.method == "GET":
-            searchDic = {"search": "all","date":dayStart}
+            searchDic = {"search": "all"}
             df = df.to_dict("records")
             datas = theaterSearch(df, searchDic) if len(df) > 0 else ""
             return render(
@@ -64,7 +64,6 @@ def searchRequest(
         templatePage,
         {
             "movies": datas,
-            "searchDic": searchDic,
             "cinemas": cinema_datas,
             "dayStart": dayStart,
             "dayEnd":dayEnd,
