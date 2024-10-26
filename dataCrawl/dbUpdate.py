@@ -12,7 +12,9 @@ def extract_valid_times(input_string):
     
     # 使用 re.findall 提取所有符合格式的部分
     valid_times = re.search(pattern, input_string)
-    return valid_times
+    if valid_times:
+        return valid_times.group()
+    return None
 
 today = datetime.today()
 today=timezone.make_aware(today)
