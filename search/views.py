@@ -42,6 +42,7 @@ def searchRequest(
         movie_datas = movie.objects.all()
         if 'recommended_movie' in request.session:
             recommended_movie=request.session['recommended_movie']
+            del request.session['recommended_movie']
             movie_datas = movie.objects.filter(title__in=recommended_movie)
         cinema_datas = list(theater.objects.values_list("cinema", flat=True).distinct())
         print(cinema_datas)
@@ -75,7 +76,7 @@ def searchRequest(
             "cinemas": cinema_datas,
             "dayStart": dayStart,
             "dayEnd":dayEnd,
-            'select_day':searchDic['date'],
+            'select_day':searchDic['date'] if 'date' in searchDic else dayStart,
             "msg":msg,
             "username":username
         },

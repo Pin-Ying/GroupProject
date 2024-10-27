@@ -18,6 +18,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
+from django.urls import reverse
 
 
 
@@ -115,11 +116,10 @@ def register(request):
         user.verification_code=randoms
         user.save()  # 將資料保存到資料庫
 
+        index_url=reverse('search_index')
         verification_link = request.build_absolute_uri(
-            "http://127.0.0.1:8000/user/verificationok/" + f'?email={email}&verification_code={randoms}'
+            index_url + f'?email={email}&verification_code={randoms}'
         )
-        # https://nwepj-a8be4739b915.herokuapp.com/
-        # http://127.0.0.1:8000/
 
         subject = '驗證你的帳號'
         message =  f'您好，{name}，您的驗證碼是：{randoms}\n\n點選此處驗證：{verification_link}'
