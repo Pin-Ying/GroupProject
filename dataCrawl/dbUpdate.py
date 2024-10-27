@@ -21,7 +21,7 @@ today=timezone.make_aware(today)
 
 
 def movieUpdate(datas):
-    movie.objects.all().delete()
+    # movie.objects.all().delete()
     moviesData = []
     movie_titles = [movie["title"] for movie in list(movie.objects.values("title"))]
     for data in datas:

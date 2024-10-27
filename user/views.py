@@ -155,7 +155,7 @@ def verificationok(request):
 def recommend(request):
     username = request.session.get('username')
     user = User.objects.get(name=username)
-    user_id = user.id  # 假設目標使用者的ID
+    user_id = user.id
 
     # 取得點擊紀錄並轉換為 DataFrame
     clicks = Click.objects.all()
@@ -169,9 +169,7 @@ def recommend(request):
 
     # 根據使用者相似度推薦電影
     recommended_movie = recommend_movies(user_id, click_matrix, user_similarity_df)
-    
-    if not request.session.get('recommended_movie'):
-        request.session['recommended_movie'] = recommended_movie
+    request.session['recommended_movie'] = recommended_movie
     return redirect("search_index")
 
 def recommend_movies(user_id, click_matrix, user_similarity_df, top_n=5):

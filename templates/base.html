@@ -57,9 +57,9 @@
         <a class="column button is-medium" href="{% url 'theaters' %}">劇院資料</a>
 
         {% if username %}
-        <a href="{% url 'recommend' %}" class="column botton">推薦</a>
-        <p class="column content">歡迎, {{ username }}!</p>
-        <a href="{% url 'logout' %}" class="column button">登出</a>
+        <a class="column button is-medium" href="{% url 'recommend' %}">推薦</a>
+        <p class="column text">歡迎, {{ username }}!</p>
+        <a class="column button is-medium" href="{% url 'logout' %}">登出</a>
 
         {% else %}
         <a class="button is-medium column" href="{% url 'register_new' %}">註冊</a>
@@ -67,7 +67,7 @@
             {% csrf_token %}
             <input type="text" class="column" name="account" id="account" value="{{account}}" placeholder="帳號">
             <input type="password" class="column" name="password" id="password" placeholder="密碼">
-            <input type="submit" class="column button is-medium" name="login" id="" value="登入">
+            <input type="submit" class="column button is-medium" name="login" value="登入">
         </form>
         {% endif %}
     </div>
