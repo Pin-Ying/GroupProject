@@ -1,28 +1,24 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.forms import UserCreationForm
-from django.db import models
+# from django.contrib.auth import login, logout, authenticate
+# from django.contrib.auth.forms import UserCreationForm
 from dataCrawl.models import movie
 from django.contrib import messages
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
-from dataCrawl.models import User,movie, theater,Click
-from django.shortcuts import render
-from django.forms.models import model_to_dict
-from search.searchMethod import movieSearch, theaterSearch
-from datetime import datetime,date
+from django.urls import reverse
+from django.utils import timezone
+
+from dataCrawl.models import movie
+from user.models import Click, User
+
+from sklearn.metrics.pairwise import cosine_similarity
+from datetime import datetime
 import pandas as pd
 import re,random
-from sklearn.metrics.pairwise import cosine_similarity
 
-from django.contrib.auth import authenticate, login
-from django.http import JsonResponse
-from django.urls import reverse
-
-
-
-today = date.today()
+today = datetime.today()
+today=timezone.make_aware(today)
 today_text = today.strftime("%m月%d日")
 
 def logout(request):
@@ -37,7 +33,7 @@ def user_profile(request):
     return render(request, "user/profile.html")
 
 
-def user_login(request, templatePage="search/searchPage.html"):
+def user_login(request):
     account_post = request.POST.get('account')
     password_post = request.POST.get('password')
 

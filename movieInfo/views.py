@@ -4,7 +4,9 @@ from django.db.models.functions import Length
 from django.http import HttpResponse
 import random
 import pandas as pd
-from dataCrawl.models import movie, showTimeInfo, theater, Review, Click, User
+from dataCrawl.models import movie, showTimeInfo, theater
+from user.models import Review, Click, User
+from user.models import Movie as user_movie
 from dataCrawl.comments import import_reviews
 from datetime import datetime
 
@@ -51,8 +53,8 @@ def movieInfo(request, movieID):
         print(user_id+1)
         print(movieID)
         # 3. 查詢點擊的電影類型
-        movies = movie.objects.get(id=movieID)
-        movie_id = movies.id  #
+        movies = movie.objects.get(id=movieID).title
+        movie_id = user_movie.objects.get(title=movies).id
         Click.objects.create(user_id=user_id, movie_id=movie_id,clicked_at=datetime.now())
         print(username)
     # import_reviews_from_csv()
@@ -75,12 +77,9 @@ def movieInfo(request, movieID):
         random_comment = random.sample(list(comments), 3)  # 隨機選擇 3 條評論
     else:
         random_comment = list(comments)
-    # context=None
     sorted_comments = comments.annotate(content_length=Length("content")).order_by(
         "-content_length"
     )
-    # thread1 = threading.Thread(target=query_location)
-    # thread1.start()
 
     return render(
         request,
@@ -97,10 +96,11 @@ def movieInfo(request, movieID):
 
 def submit_comment(request):
     username=request.session['username'] if 'username' in request.session else None
-    if request.method == "POST":
+    if request.method == "POST" and username:
+        user = User.objects.get(name=username)
         movie_name = request.POST.get("movie-name")
         comment = request.POST.get("comment")
-        movie_data = movie.objects.get(title=movie_name)
+        movie_data = user_movie.objects.get(title=movie_name)
         print(movie_name, movie_data)
         # 創建並保存評論
         review = Review(movie=movie_data, content=comment)
@@ -110,3 +110,4 @@ def submit_comment(request):
             "comment_success.html",
             {"movie_name": movie_name, "movie_id": movie_data.id,"username":username},
         )  # 成功頁面
+    return HttpResponse('登入後才能留言')

@@ -1,10 +1,34 @@
 from django.utils import timezone
+from django.db import connections
 from .models import movie, theater, showTimeInfo
+from user.models import Movie as user_movie
 from .datafrom import miramar, ambassador,viewshow,showtimes
 # from .datafrom import showtimes_org as showtimes
 from datetime import datetime
 import pandas as pd
 import re
+
+def copy_movies():
+    old_datas=list(user_movie.objects.values_list('title', flat=True).distinct())
+    with connections['default'].cursor() as cursor:
+        cursor.execute("SELECT * FROM dataCrawl_movie")
+        movies = cursor.fetchall()
+
+    for movie in movies:
+        if movie[1] in old_datas:
+            continue
+        movie_datas=user_movie(
+            title=movie[1],
+            img_src=movie[2],
+            trailer_link=movie[3],
+            movie_type=movie[4],
+            main_actor=movie[5],
+            info=movie[6],
+            release_date=movie[7],
+            running_time=movie[8],
+            screen_type=movie[9],
+        )
+        movie_datas.save(using='second_db')  # 指定使用第二个数据库保存
 
 def extract_valid_times(input_string):
     # 定義正規表示式
@@ -21,7 +45,7 @@ today=timezone.make_aware(today)
 
 
 def movieUpdate(datas):
-    # movie.objects.all().delete()
+    movie.objects.all().delete()
     moviesData = []
     movie_titles = [movie["title"] for movie in list(movie.objects.values("title"))]
     for data in datas:
@@ -52,7 +76,6 @@ def movieUpdate(datas):
                 screen_type=screen_type,
             )
         )
-
     movie.objects.bulk_create(moviesData)
 
 
@@ -120,19 +143,19 @@ def showUpdate(datas,is_limit=False):
 
 def UpdateMovies():
 
-    ### 秀泰
-    sho_movies = showtimes.scrape_all_movies()
+    # ### 秀泰
+    # sho_movies = showtimes.scrape_all_movies()
 
-    ### 美麗華
-    mir_movie = miramar.get_movie()
+    # ### 美麗華
+    # mir_movie = miramar.get_movie()
 
-    ### 國賓
-    amb_movie, amb_show = ambassador.get_movie_and_show()
+    # ### 國賓
+    # amb_movie, amb_show = ambassador.get_movie_and_show()
 
-    movies = pd.concat([mir_movie, amb_movie]).drop_duplicates(subset=["電影名稱"])
-    movieUpdate(movies.to_dict("records"))
-    # showUpdate(mir_show+mir_show)
+    # movies = pd.concat([mir_movie, amb_movie]).drop_duplicates(subset=["電影名稱"])
+    # movieUpdate(movies.to_dict("records"))
 
+    copy_movies()
     return {"result": "finish!"}
 
 

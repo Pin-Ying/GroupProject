@@ -1,4 +1,5 @@
-from .models import movie, Review
+from .models import movie
+from user.models import Review
 import pandas as pd
 import time
 from bs4 import BeautifulSoup

@@ -83,11 +83,24 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
         # "NAME": BASE_DIR / "db.sqlite3",
         "NAME": os.environ.get("DATABASE_URL", BASE_DIR / "db.sqlite3"),
+    },
+    "second_db": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "tznqw1c01pl66tzg",
+        "USER": "nb8d0e7fu2pces8t",
+        "PASSWORD": "wi6f1jms4eaabcct",
+        "HOST": "q57yawiwmnaw13d2.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+        "PORT": "3306",
+        "OPTIONS": {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'",
+        },
     }
 }
 
+DATABASE_ROUTERS = ['djangoDEMO.db_router.MyRouter']
+
 # DATABASES = {
-#     "default": {
+#     "second_db": {
 #         "ENGINE": "django.db.backends.mysql",
 #         "NAME": "test",
 #         "USER": "root",
@@ -101,11 +114,11 @@ DATABASES = {
 # }
 
 # DATABASES = {
-#     "default": {
+#     "second_db": {
 #         "ENGINE": "django.db.backends.mysql",
-#         "NAME": "m457njoy2xz7xt5t",
-#         "USER": "tvfkxkzjf34cx436",
-#         "PASSWORD": "bkcncpf2slm4gb6m",
+#         "NAME": "tznqw1c01pl66tzg",
+#         "USER": "nb8d0e7fu2pces8t",
+#         "PASSWORD": "wi6f1jms4eaabcct",
 #         "HOST": "q57yawiwmnaw13d2.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
 #         "PORT": "3306",
 #         "OPTIONS": {
