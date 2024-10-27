@@ -59,6 +59,7 @@ def movieInfo(request, movieID):
         print(username)
     # import_reviews_from_csv()
     movie_data = movie.objects.get(id=movieID)
+    user_movie_data=user_movie.objects.get(title=movie_data.title)
     show_data = showTimeInfo.objects.filter(movie=movieID)
     theater_data = theater.objects.all()
     movie_data = model_to_dict(movie_data)
@@ -68,7 +69,7 @@ def movieInfo(request, movieID):
     print(movie_data, show_data)
 
     # 查詢評論資料
-    comments = Review.objects.filter(movie=movieID).values_list("content", flat=True)
+    comments = Review.objects.filter(movie=user_movie_data).values_list("content", flat=True)
 
     # 隨機選擇評論
     if not comments:
@@ -101,13 +102,14 @@ def submit_comment(request):
         movie_name = request.POST.get("movie-name")
         comment = request.POST.get("comment")
         movie_data = user_movie.objects.get(title=movie_name)
+        movie_id=movie.objects.get(title=movie_name).id
         print(movie_name, movie_data)
         # 創建並保存評論
-        review = Review(movie=movie_data, content=comment)
+        review = Review(user=user,movie=movie_data, content=comment)
         review.save()
         return render(
             request,
             "comment_success.html",
-            {"movie_name": movie_name, "movie_id": movie_data.id,"username":username},
+            {"movie_name": movie_name, "movie_id": movie_id,"username":username},
         )  # 成功頁面
     return HttpResponse('登入後才能留言')

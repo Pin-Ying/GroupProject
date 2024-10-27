@@ -112,7 +112,7 @@ def register(request):
         user.verification_code=randoms
         user.save()  # 將資料保存到資料庫
 
-        index_url=reverse('search_index')
+        index_url=reverse('verificationok')
         verification_link = request.build_absolute_uri(
             index_url + f'?email={email}&verification_code={randoms}'
         )
@@ -132,41 +132,48 @@ def register(request):
         return render(request,'user/logset.html',{"name":name})
     
 def verificationok(request):
-    ssss = request.GET.get("email")
-    dddd = request.GET.get("verification_code")
-    if ssss and dddd !=None:
-        user = User.objects.get(email=ssss)
+    v_email = request.GET.get("email")
+    v_code = request.GET.get("verification_code")
+    if v_email and v_code !=None:
+        user = User.objects.get(email=v_email)
         print(user.verificationok)
-        print(ssss,dddd)
+        print(v_email,v_code)
         if not user.verificationok:
-                # 如果 verificationok 為 True，檢查驗證碼是否匹配
-                if user.verification_code == dddd:
-                    user.verificationok = True
-                    user.save()
-                    # messages.success(request, '驗證成功！')
-                    return render(request, 'user/restar.html')
-    return render(request, 'user/restar.html')
+            # 如果 verificationok 為 True，檢查驗證碼是否匹配
+            if user.verification_code == v_code:
+                user.verificationok = True
+                user.save()
+                request.session['msg']=='驗證成功！'
+                return render(request, 'user/restar.html')
+            else:
+                request.session['msg']=='驗證過程出現錯誤'
+    return redirect('search_index')
 
 
 def recommend(request):
-    username = request.session.get('username')
-    user = User.objects.get(name=username)
-    user_id = user.id
+    try:
+        username = request.session.get('username')
+        user = User.objects.get(name=username)
+        user_id = user.id
 
-    # 取得點擊紀錄並轉換為 DataFrame
-    clicks = Click.objects.all()
-    data = [{'user': click.user.id, 'moviename': click.movie.title} for click in clicks]
-    df = pd.DataFrame(data)
+        # 取得點擊紀錄並轉換為 DataFrame
+        clicks = Click.objects.all()
+        data = [{'user': click.user.id, 'moviename': click.movie.title} for click in clicks]
+        df = pd.DataFrame(data)
 
-    # 建立點擊矩陣並計算相似度
-    click_matrix = df.pivot_table(index='user', columns='moviename', aggfunc='size', fill_value=0)
-    user_similarity = cosine_similarity(click_matrix)
-    user_similarity_df = pd.DataFrame(user_similarity, index=click_matrix.index, columns=click_matrix.index)
+        # 建立點擊矩陣並計算相似度
+        click_matrix = df.pivot_table(index='user', columns='moviename', aggfunc='size', fill_value=0)
+        user_similarity = cosine_similarity(click_matrix)
+        user_similarity_df = pd.DataFrame(user_similarity, index=click_matrix.index, columns=click_matrix.index)
 
-    # 根據使用者相似度推薦電影
-    recommended_movie = recommend_movies(user_id, click_matrix, user_similarity_df)
-    request.session['recommended_movie'] = recommended_movie
-    return redirect("search_index")
+        # 根據使用者相似度推薦電影
+        recommended_movie = recommend_movies(user_id, click_matrix, user_similarity_df)
+        request.session['recommended_movie'] = recommended_movie
+        return redirect("search_index")
+    except Exception as e:
+        request.session['msg']='目前無推薦電影'
+        return redirect("search_index")
+
 
 def recommend_movies(user_id, click_matrix, user_similarity_df, top_n=5):
     # 找到與目標使用者最相似的幾個使用者
