@@ -158,11 +158,12 @@ def recommend(request):
 
         # 取得點擊紀錄並轉換為 DataFrame
         clicks = Click.objects.all()
-        data = [{'user': click.user.id, 'moviename': click.movie.title} for click in clicks]
+        data = [{'user': click.user.id, 'moviename': click.movie_title, 'clicked_at': click.clicked_at} for click in clicks]
         df = pd.DataFrame(data)
-
-        # 建立點擊矩陣並計算相似度
-        click_matrix = df.pivot_table(index='user', columns='moviename', aggfunc='size', fill_value=0)
+        df['time_weight'] = (timezone.now() - df['clicked_at']).dt.total_seconds() / (60 * 60 * 24)
+        df['weight'] = 1 / (1 + df['time_weight'])  # 時間越近，權重越高
+        # 使用權重建立點擊矩陣
+        click_matrix = df.pivot_table(index='user', columns='moviename', values='weight', aggfunc='sum', fill_value=0)
         user_similarity = cosine_similarity(click_matrix)
         user_similarity_df = pd.DataFrame(user_similarity, index=click_matrix.index, columns=click_matrix.index)
 

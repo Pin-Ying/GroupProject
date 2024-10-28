@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.forms.models import model_to_dict
 from django.db.models.functions import Length
 from django.http import HttpResponse
+from django.utils import timezone
 import random
 import pandas as pd
 from dataCrawl.models import movie, showTimeInfo, theater
@@ -9,6 +10,9 @@ from user.models import Review, Click, User
 from user.models import Movie as user_movie
 from dataCrawl.comments import import_reviews
 from datetime import datetime
+
+now=datetime.now()
+now=timezone.make_aware(now)
 
 # Create your views here.
 def theaterInfo(request):
@@ -50,12 +54,9 @@ def movieInfo(request, movieID):
         username = request.session['username']
         user = User.objects.get(name=username)
         user_id = user.id
-        print(user_id+1)
-        print(movieID)
-        # 3. 查詢點擊的電影類型
-        movies = movie.objects.get(id=movieID).title
-        movie_id = user_movie.objects.get(title=movies).id
-        Click.objects.create(user_id=user_id, movie_id=movie_id,clicked_at=datetime.now())
+        # 查詢點擊的電影類型
+        movie_title = movie.objects.get(id=movieID).title
+        Click.objects.create(user_id=user_id, movie_title=movie_title,clicked_at=datetime.now())
         print(username)
     # import_reviews_from_csv()
     movie_data = movie.objects.get(id=movieID)
