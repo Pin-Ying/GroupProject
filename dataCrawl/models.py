@@ -37,6 +37,7 @@ class showTimeInfo(models.Model):
     id = models.AutoField(primary_key=True)
     movie = models.ForeignKey(movie, on_delete=models.CASCADE)
     theater = models.ForeignKey(theater, on_delete=models.CASCADE)
+    full_title = models.CharField(max_length=255, blank=True, null=True)
     date = models.DateField(max_length=100, blank=True, null=True)
     time = models.CharField(max_length=100, blank=True, null=True)
     site = models.CharField(max_length=100, blank=True, null=True)

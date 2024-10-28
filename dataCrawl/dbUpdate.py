@@ -45,7 +45,7 @@ today=timezone.make_aware(today)
 
 
 def movieUpdate(datas):
-    movie.objects.all().delete()
+    # movie.objects.all().delete()
     moviesData = []
     movie_titles = [movie["title"] for movie in list(movie.objects.values("title"))]
     for data in datas:
@@ -113,6 +113,7 @@ def showUpdate(datas,is_limit=False):
         print(data, "Running...")
         movieId = data["電影名稱"]
         theaterId = data["影城"]
+        full_title = data["場次類型"] if "場次類型" in data else None
         date = data["日期"][:100]
         time = data["時間"][:100]
         time = extract_valid_times(time)
@@ -125,7 +126,7 @@ def showUpdate(datas,is_limit=False):
                 print(f"Movie or theater not found: {movieId}, {theaterId}")
                 continue
             show_data = showTimeInfo(
-                movie=movie_instance, theater=theater_instance, date=date, time=time, site=site
+                movie=movie_instance, theater=theater_instance, full_title=full_title, date=date, time=time, site=site
             )
             if show_data in showDatas:
                 continue
@@ -142,18 +143,18 @@ def showUpdate(datas,is_limit=False):
 
 
 def UpdateMovies():
+    ### 秀泰
+    sho_movies = showtimes.scrape_all_movies()
 
-    # ### 秀泰
-    # sho_movies = showtimes.scrape_all_movies()
+    ### 美麗華
+    mir_movie = miramar.get_movie()
 
-    # ### 美麗華
-    # mir_movie = miramar.get_movie()
+    ### 國賓
+    amb_movie, amb_show = ambassador.get_movie_and_show()
 
-    # ### 國賓
-    # amb_movie, amb_show = ambassador.get_movie_and_show()
-
-    # movies = pd.concat([mir_movie, amb_movie]).drop_duplicates(subset=["電影名稱"])
-    # movieUpdate(movies.to_dict("records"))
+    movies = pd.concat([sho_movies, mir_movie, amb_movie]).drop_duplicates(subset=["電影名稱"])
+    # movies = amb_movie.drop_duplicates(subset=["電影名稱"])
+    movieUpdate(movies.to_dict("records"))
 
     copy_movies()
     return {"result": "finish!"}
@@ -182,6 +183,7 @@ def UpdateShows():
     vie_show=viewshow.get_datas()
 
     shows = pd.concat([sho_show, mir_show, amb_show,vie_show]).drop_duplicates()
+    # shows=amb_show.drop_duplicates()
     shows_unique = shows[
         ~shows[["電影名稱", "影城", "日期"]]
         .apply(tuple, axis=1)

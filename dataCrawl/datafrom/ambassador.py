@@ -20,19 +20,23 @@ posturl=[]
 def get_one_movie(url):
     global finall,movietisr
     soups=get_soup(url)
-    title = soups.select('div.cell.small-12.medium-12.large-12.movie-info-box>h2')[0].text
-    posturl=soups.select('div>img')[0].get('src')
+    titles = soups.select('div.cell.small-12.medium-12.large-12.movie-info-box>h2')
+    #titles[0].text電影名稱
+    title=titles[0].text
+    posturls=soups.select('div>img')
+    #posturl[0].get('src')海報網址
+    posturl=posturls[0].get('src')
     sjcotyday= soups.select('div.cell.small-12.medium-12.large-12.movie-info-box>p')
-    # 電影介紹
+    #sjcotyday[0].text電影介紹
     sj=sjcotyday[0].text
-    # 主要演員
-    cost=sjcotyday[1].text.replace("主要演員：","") if sjcotyday[1] else "null"
-    # 影片類型
-    types=sjcotyday[2].text.replace("影片類型：","") if sjcotyday[2] else "null"
-    # 上映日期
-    upday=sjcotyday[3].text.strip("上映日期：").replace("/","-") if sjcotyday[3] else "null"
+    #sjcotyday[1].text主要演員：
+    cost=sjcotyday[1].text.replace("主要演員：","") if sjcotyday[1].text.replace("主要演員：","") else "null"
+    #sjcotyday[2].text影片類型：
+    types=sjcotyday[2].text.replace("影片類型：","") if sjcotyday[2].text.replace("影片類型：","") else "null"
+    #sjcotyday[3].text上映日期：
+    upday=sjcotyday[3].text.replace("上映日期：","")if sjcotyday[3].text.replace("上映日期：","") else "null"
     time=soups.select('div.rating-box>span')
-    # 電影時間
+    #time[1].text電影時間
     if len(time) > 1:
         motime = time[1].text
     elif len(time) == 1:
@@ -61,11 +65,21 @@ def get_one_movie(url):
         soups=get_soup(urls)
         for item in soups.select('div.theater-box'):
             lcmove=item.select("h3>a")[0].text
-            times=item.select("li>h6")
-            seats=item.select("p>span.float-left.info")
+            locs=item.select("div.theater-box>h3>span")
+            # times=item.select("li>h6")
+            # seats=item.select("p>span.float-left.info")
+            screenings = item.find_all('p', class_='tag-seat')
+            for screening in screenings:
+                movie_info = screening.get_text()
+                times = screening.find_next('ul', class_='no-bullet').find_all('li')
+                for time in times:
+                    # 抓取時間
+                    showtime = time.find('h6').get_text(strip=True)
+                    # 抓取廳位和座位數
+                    hall_seat_info = time.find('span', class_='info').get_text(strip=True)
             
-            for time,seat in zip(times,seats):
-                show_infos.append([title,lcmove,date,time.text.strip(),seat.text])
+                # for time,seat in zip(times,seats):
+                    show_infos.append([title,lcmove,date,showtime,hall_seat_info,movie_info])
     return movie_queue.put(movie_datas),show_queue.put(show_infos)
 
     # finall.append(movie_datas)
@@ -94,7 +108,7 @@ def get_movie_and_show():
         movietisr.extend(show_queue.get())
 
     movie_datas=pd.DataFrame(finall,columns=["電影名稱", "電影海報網址", "上或待上映","電影預告網址","影片類型","主要演員","電影介紹","電影時長","電影螢幕"])
-    show_datas=pd.DataFrame(movietisr,columns=["電影名稱","影城","日期","時間", "廳位席位"])
+    show_datas=pd.DataFrame(movietisr,columns=["電影名稱","影城","日期","時間", "廳位席位","場次類型"])
     print('get_movie_and_show FINISH')
     print(show_datas)
     return movie_datas,show_datas
