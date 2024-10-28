@@ -119,16 +119,20 @@ def seats(request):
         request.session['theater_name'] = theater_name = request.GET["theater"]
         select_day= request.GET["select_day"]
         select_day=datetime.strptime(select_day, '%Y-%m-%d').date()
+        request.session['select_day']=select_day.strftime('%Y-%m-%d')
     
     ### 日期變動
     if request.method=='POST':
-        data = json.loads(request.body)
-        select_day = data.get("select_day")
-        select_day=datetime.strptime(select_day, '%Y年%m月%d日').date()
-        print('select_day:',select_day)
+        if request.content_type == 'application/json':
+            data = json.loads(request.body)
+            select_day = data.get("select_day")
+            select_day=datetime.strptime(select_day, '%Y年%m月%d日').date()
+            request.session['select_day']=select_day.strftime('%Y-%m-%d')
+            print('select_day:',select_day.strftime('%Y-%m-%d'))
 
         movie_title=request.session['movie_title']
         theater_name=request.session['theater_name']
+        select_day=request.session['select_day']
         # selected_room = request.POST.get("room")
         # selected_session = request.POST.get("session")
     movie_data = movie.objects.get(title=movie_title)
