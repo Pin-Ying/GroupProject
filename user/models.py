@@ -30,10 +30,11 @@ class User(models.Model):
 
 class Click(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    # movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    movie_title = models.CharField(max_length=100)  # 儲存電影名稱
     clicked_at = models.DateTimeField(auto_now_add=True) #點選時間
     def __str__(self):
-        return f"{self.user.name}/{self.movie.title}/{self.clicked_at}"
+        return f"{self.user.name}/{self.movie_title}/{self.clicked_at}"
     
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

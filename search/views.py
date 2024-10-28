@@ -3,6 +3,7 @@ from django.forms.models import model_to_dict
 from django.db.models import Max
 from django.utils import timezone
 from dataCrawl.models import movie, showTimeInfo, theater
+from user.models import User 
 from search.searchMethod import movieSearch, theaterSearch
 from datetime import datetime,timedelta
 import pandas as pd
@@ -30,11 +31,22 @@ def searchRequest(
     searchDic = ""
     datas = ""
     cinema_datas = ""
+    username=None
     if 'msg' in request.session:
         msg=request.session['msg']
         del request.session['msg']
 
-    username=request.session['username'] if 'username' in request.session else None
+    if 'username' in request.session:
+        username = request.session['username']
+        user = User.objects.get(name=username)
+        preferences = user.preferences  # 取得使用者偏好
+        preferences_list = preferences.split(",") if preferences else []
+
+        # 根據偏好列表進行替換
+        if "卡通動畫" in preferences_list:
+            preferences_list = ["動畫" if p == "卡通動畫" else p for p in preferences_list]
+        elif "動畫" in preferences_list:
+            preferences_list = ["動畫" if p == "動畫" else p for p in preferences_list]
 
     try:
         ### 資料庫讀取全部資料
@@ -52,6 +64,8 @@ def searchRequest(
             searchDic = {"search": "all"}
             df = df.to_dict("records")
             datas = theaterSearch(df, searchDic) if len(df) > 0 else ""
+            if preferences_list:
+                datas = sorted(datas, key=lambda x: sum(pref in x['movie_type'] for pref in preferences_list), reverse=True)
             return render(
                 request, templatePage, {"movies": datas, "cinemas": cinema_datas,"dayStart": dayStart,
             "dayEnd":dayEnd,'select_day':dayStart,"msg":msg,"username":username}
