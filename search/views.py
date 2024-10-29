@@ -55,24 +55,30 @@ def searchRequest(
     try:
         ### 資料庫讀取全部資料
         # 從電影資料查詢(電影標題、選擇螢幕)
-        movie_datas = movie.objects.all()
+        datas,upcoming_datas='',''
+        movie_datas = movie.objects.filter(release_date__lt=today)
         if 'recommended_movie' in request.session:
             recommended_movie=request.session['recommended_movie']
             del request.session['recommended_movie']
-            movie_datas = movie.objects.filter(title__in=recommended_movie)
+            movie_datas = movie_datas.filter(title__in=recommended_movie)
+
+        upcoming_movies=movie.objects.filter(release_date__gt=today)
         cinema_datas = list(theater.objects.values_list("cinema", flat=True).distinct())
         print(cinema_datas)
         df = pd.DataFrame([model_to_dict(movie) for movie in movie_datas])
+        df_upcoming=pd.DataFrame([model_to_dict(movie) for movie in upcoming_movies])
 
         if request.method == "GET":
             searchDic = {"search": "all"}
             df = df.to_dict("records")
+            df_upcoming = df_upcoming.to_dict("records")
             datas = theaterSearch(df, searchDic) if len(df) > 0 else ""
+            upcoming_datas=theaterSearch(df_upcoming, searchDic) if len(df_upcoming) > 0 else ""
             if preferences_list:
                 datas = sorted(datas, key=lambda x: sum(pref in x['movie_type'] for pref in preferences_list), reverse=True)
             return render(
                 request, templatePage, {"movies": datas, "cinemas": cinema_datas,"dayStart": dayStart,
-            "dayEnd":dayEnd,'select_day':dayStart,"msg":msg,"username":username}
+            "dayEnd":dayEnd,'select_day':dayStart,"msg":msg,"username":username,"upcoming_movies":upcoming_datas}
             )
 
         search = request.POST
@@ -81,6 +87,8 @@ def searchRequest(
         # datas = movieSearch(df=movie_df,searchDic=searchDic)
         datas, searchDic = movieSearch(df=df, searchDic=searchDic)
         datas = theaterSearch(datas, searchDic)
+        upcoming_datas, searchDic = movieSearch(df=df_upcoming, searchDic=searchDic)
+        upcoming_datas = theaterSearch(datas, searchDic)
         # print(datas)
 
     except Exception as e:
@@ -96,7 +104,8 @@ def searchRequest(
             "dayEnd":dayEnd,
             'select_day':searchDic['date'] if 'date' in searchDic else dayStart,
             "msg":msg,
-            "username":username
+            "username":username,
+            "upcoming_movies":upcoming_datas
         },
     )
 

@@ -25,7 +25,7 @@
 </style>
 {% endblock %}
 {% block script %}
-<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 {% endblock %}
 {% block content %}
 <form action="" method="post">
@@ -41,12 +41,15 @@
             </tr>
         </thead> -->
 
-        <div class="column is-5">
-            <div class="title">選擇螢幕(Imax, 3D, 數位)</div>
+        <div class="column is-3">
+            <div class="title is-5">選擇螢幕(Imax, 3D)</div>
             <input type="checkbox" id="Imax" name="Imax">
             <label for="Imax">Imax</label>
             <input type="checkbox" id="3D" name="3D">
             <label for="3D">3D</label>
+        </div>
+        <div class="column">
+            <input type="button" class="button" id="toggle-button" value="顯示即將上映">
         </div>
         <div class="column">
             <div class="control">
@@ -80,50 +83,101 @@
 
         <div class="column is-5 field has-addons">
             <div class="control">
-                <input class="input is-medium" type="text" placeholder="輸入電影關鍵字" name="movieTitle">
+                <input class="input" type="text" placeholder="輸入電影關鍵字" name="movieTitle">
             </div>
             <div class="control">
-                <button class="button is-medium is-info">搜尋</button>
+                <button class="button is-info">搜尋</button>
             </div>
         </div>
 
     </div>
 </form>
-<div class="poster columns is-multiline">
-    {% if movies %}
-    {% for movie in movies %}
-    <div class="column is-4">
-        {% if movie.id %}
-        <a href="{% url 'movieInfo' movieID=movie.id %}">
+<div id="showing">
+    <div class="poster columns is-multiline">
+        <div class="title is-3 column is-12">現正熱映</div>
+        {% if movies %}
+        {% for movie in movies %}
+        <div class="column is-4">
+            {% if movie.id %}
+            <a href="{% url 'movieInfo' movieID=movie.id %}">
+                <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
+            </a>
+            {% else %}
             <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
-        </a>
-        {% else %}
-        <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
-        {% endif %}
-        <div class="movie-info">
-            <p class="title is-4">{{ movie.title }}</p>
-            <p class="scrollable-content">{{ movie.info }}</p>
-            <form action="{% url 'seats' %}" method="get">
-                {% csrf_token %}
-                <input type="hidden" name="movie_title" value="{{movie.title}}">
-                <input type="hidden" name="select_day" value="{{select_day}}">
-                <select class="select is-medium" id="theater" name="theater">
-                    {% for theater in movie.theaters %}
-                    <option value="{{ theater }}">{{ theater }}</option>
-                    {% endfor %}
-                </select>
-                <button class="button is-medium is-info" type="submit">搜尋</button>
-            </form>
+            {% endif %}
+            <div class="movie-info">
+                <p class="title is-4">{{ movie.title }}</p>
+                <p class="scrollable-content">{{ movie.info }}</p>
+                <form action="{% url 'seats' %}" method="get">
+                    {% csrf_token %}
+                    <input type="hidden" name="movie_title" value="{{movie.title}}">
+                    <input type="hidden" name="select_day" value="{{select_day}}">
+                    <select class="select is-medium" id="theater" name="theater">
+                        {% for theater in movie.theaters %}
+                        <option value="{{ theater }}">{{ theater }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="button is-medium is-info" type="submit">搜尋</button>
+                </form>
 
+            </div>
         </div>
+        {% endfor %}
+        {% else %}
+        <div class="title column is-12">目前尚無上映的電影資料</div>
+        {% endif %}
     </div>
-    {% endfor %}
-    {% else %}
-    <div class="title column is-12">目前尚無電影資料</div>
-    {% endif %}
+</div>
+
+<!-- 即將上映 -->
+<div id="coming-soon" hidden="true">
+    <div class="poster columns is-multiline">
+        <div class="title is-3 column is-12">即將上映</div>
+        {% if upcoming_movies %}
+        {% for movie in upcoming_movies %}
+        <div class="column is-4">
+            {% if movie.id %}
+            <a href="{% url 'movieInfo' movieID=movie.id %}">
+                <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
+            </a>
+            {% else %}
+            <img class="movie-img" src="{{ movie.img_src }}" alt="尚無照片...">
+            {% endif %}
+            <div class="movie-info">
+                <p class="title is-4">{{ movie.title }}</p>
+                <p class="scrollable-content">{{ movie.info }}</p>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="title column is-12">目前尚無即將上映的電影資料</div>
+        {% endif %}
+    </div>
 </div>
 
 <script>
+    const toggleButton = document.querySelector("input#toggle-button");
+    const showingBox = document.querySelector("div#showing");
+    const comingBox = document.querySelector("div#coming-soon");
+    let isShowing = true;
+
+    toggleButton.addEventListener("click", () => {
+        isShowing = !isShowing;
+
+        if (isShowing) {
+            console.log("顯示正在上映的電影!");
+            $(showingBox).attr('hidden', false);
+            $(comingBox).attr('hidden', true);
+            toggleButton.value = "顯示即將上映"; // 更新按鈕文字
+        } else {
+            console.log("顯示即將上映的電影!");
+            $(showingBox).attr('hidden', true);
+            $(comingBox).attr('hidden', false);
+            toggleButton.value = "顯示現正熱映"; // 更新按鈕文字
+        }
+
+    });
+
     $(function () {
         var len = 200; // 超過字數以"..."取代
         $(".content").each(function (i) {

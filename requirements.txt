@@ -1,12 +1,13 @@
 beautifulsoup4==4.12.3
-Django==5.1
+Django==5.1.2
 django_heroku==0.3.1
-Flask==3.0.3
-myapp==0.1dev
 pandas==2.2.3
+Pillow==11.0.0
 Requests==2.32.3
+scikit_learn==1.5.2
 selenium==4.25.0
-scikit-learn==1.5.2
+
+myapp==0.1dev
 gunicorn
 mysqlclient
 dj-database-url
