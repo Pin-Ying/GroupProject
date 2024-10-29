@@ -1,10 +1,11 @@
-from .models import movie
-from user.models import Review
+# from .models import movie
+from user.models import Review, Movie
 import pandas as pd
 import time
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+
 
 # 清空評論資料表並導入新資料
 def import_reviews():
@@ -54,7 +55,7 @@ def import_reviews():
     df = pd.DataFrame(data)
     for index, row in df.iterrows():
         try:
-            movie_data = movie.objects.get(title=row["電影名稱"])
+            movie_data = Movie.objects.get(title=row["電影名稱"])
         except movie_data.DoesNotExist:
             print(f"電影 '{row['電影名稱']}' 在數據庫中不存在，跳過該排片。")
             continue  # 如果電影不存在，跳過當前行

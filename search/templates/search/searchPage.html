@@ -107,7 +107,7 @@
             {% endif %}
             <div class="movie-info">
                 <p class="title is-4">{{ movie.title }}</p>
-                <p class="scrollable-content">{{ movie.info }}</p>
+                <!-- <p class="scrollable-content">{{ movie.info }}</p> -->
                 <form action="{% url 'seats' %}" method="get">
                     {% csrf_token %}
                     <input type="hidden" name="movie_title" value="{{movie.title}}">
