@@ -1,4 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from django.urls import reverse
 from django.forms.models import model_to_dict
 from django.db.models import Max
 from django.utils import timezone
@@ -8,6 +11,7 @@ from search.searchMethod import movieSearch, theaterSearch
 from datetime import datetime,timedelta
 import pandas as pd
 import json
+from dataCrawl.datafrom.seatMap import findSeats
 
 # test 123456789
 # Create your views here.
@@ -77,7 +81,7 @@ def searchRequest(
         # datas = movieSearch(df=movie_df,searchDic=searchDic)
         datas, searchDic = movieSearch(df=df, searchDic=searchDic)
         datas = theaterSearch(datas, searchDic)
-        print(datas)
+        # print(datas)
 
     except Exception as e:
         print(e)
@@ -109,37 +113,56 @@ def theaters(request):
 
 def seats(request):
     username=request.session['username'] if 'username' in request.session else None
-    selected_room = ""
-    selected_session = ""
+    selected_room = []
+    selected_session = []
     movie_title=""
     theater_name=""
+    select_day = ""
+    seatImage = ""
+    msg=''
 
-    if request.method == "GET":
-        request.session['movie_title'] = movie_title = request.GET["movie_title"]
-        request.session['theater_name'] = theater_name = request.GET["theater"]
-        select_day= request.GET["select_day"]
-        select_day=datetime.strptime(select_day, '%Y-%m-%d').date()
-        request.session['select_day']=select_day.strftime('%Y-%m-%d')
-    
-    ### 日期變動
-    if request.method=='POST':
-        if request.content_type == 'application/json':
-            data = json.loads(request.body)
-            select_day = data.get("select_day")
-            select_day=datetime.strptime(select_day, '%Y年%m月%d日').date()
+    try:
+        if request.method == "GET":
+            request.session['movie_title'] = movie_title = request.GET["movie_title"]
+            request.session['theater_name'] = theater_name = request.GET["theater"]
+            select_day= request.GET["select_day"]
+            select_day=datetime.strptime(select_day, '%Y-%m-%d').date()
             request.session['select_day']=select_day.strftime('%Y-%m-%d')
-            print('select_day:',select_day.strftime('%Y-%m-%d'))
+        
+        if request.method=='POST':
+            movie_title=request.session['movie_title']
+            theater_name=request.session['theater_name']
 
-        movie_title=request.session['movie_title']
-        theater_name=request.session['theater_name']
-        select_day=request.session['select_day']
-        # selected_room = request.POST.get("room")
-        # selected_session = request.POST.get("session")
+            ### 日期變動
+            if "select_day" in request.POST:
+                select_day = request.POST['select_day']
+                print(select_day)
+                select_day=datetime.strptime(select_day, '%Y年%m月%d日').date()
+                print('select_day:',select_day.strftime('%Y-%m-%d'))
+
+            elif "room" in request.POST and "session" in request.POST:
+                selected_room = [request.POST.get("room")]
+                selected_session = [request.POST.get("session")]
+                select_day=request.session['select_day']
+                select_day=datetime.strptime(select_day, '%Y-%m-%d').date()
+                emptySeat, bookedSeat, seatImage = findSeats(theater_name,movie_title,select_day,selected_room,selected_session)
+                msg='暫無資料' if emptySeat=='暫無資料' else msg
+
+    except Exception as e:
+        msg='載入過程出現錯誤'
+        print(str(e))
+            
     movie_data = movie.objects.get(title=movie_title)
     theater_data = theater.objects.get(name=theater_name)
     dates=showTimeInfo.objects.filter(movie=movie_data,theater=theater_data).values_list('date',flat=True).distinct()
     show_data = showTimeInfo.objects.filter(movie=movie_data,theater=theater_data,date=select_day)
 
+    print("日期：",select_day)  # debug
+    print("戲院：",theater_name)  # debug
+    print("電影：",movie_title)  # debug
+    print("影廳：",selected_room)  # debug
+    print("場次：",selected_session)  # debug
+    
     room = []
     session = []
     for m in show_data:
@@ -155,12 +178,13 @@ def seats(request):
         "dates": dates,
         "current_date": select_day,
         "movie_poster_url": movie_data.img_src,
-        "seat_map_url": theater_data,
+        "seat_map_url": seatImage,
         "session_data": session_data,
         "theater_title": theater_data.name,
         "selected_room": selected_room,
         "selected_session": selected_session,
-        'username':username
+        'username':username,
+        'msg':msg
     }
 
     return render(request, "search/ordering.html", context)

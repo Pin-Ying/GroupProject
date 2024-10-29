@@ -85,6 +85,10 @@ def register(request):
         elif User.objects.filter(account=account).exists():
             messages.error(request, '已有重複帳號')
             return render(request,'user/register_new.html',locals())
+        
+        elif User.objects.filter(name=name).exists():
+            messages.error(request, '已有重複名稱')
+            return render(request,'user/register_new.html',locals())
 
         # 檢查 Email 是否格式正確
         elif email:
@@ -143,10 +147,10 @@ def verificationok(request):
             if user.verification_code == v_code:
                 user.verificationok = True
                 user.save()
-                request.session['msg']=='驗證成功！'
+                request.session['msg']='驗證成功！'
                 return render(request, 'user/restar.html')
             else:
-                request.session['msg']=='驗證過程出現錯誤'
+                request.session['msg']='驗證過程出現錯誤'
     return redirect('search_index')
 
 
