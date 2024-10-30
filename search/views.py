@@ -58,7 +58,7 @@ def searchRequest(
         ### 資料庫讀取全部資料
         # 從電影資料查詢(電影標題、選擇螢幕)
         datas, upcoming_datas = "", ""
-        movie_datas = movie.objects.filter(release_date__lt=today)
+        movie_datas = movie.objects.filter(release_date__lte=today)
         if "recommended_movie" in request.session:
             recommended_movie = request.session["recommended_movie"]
             del request.session["recommended_movie"]
@@ -199,7 +199,7 @@ def seats(request):
     )
     show_data = showTimeInfo.objects.filter(
         movie=movie_data, theater=theater_data, date=select_day
-    ).distinct(["movie", "theater", "date", "site"])
+    )
 
     print("日期：", select_day)  # debug
     print("戲院：", theater_name)  # debug
@@ -207,13 +207,8 @@ def seats(request):
     print("影廳：", selected_room)  # debug
     print("場次：", selected_session)  # debug
 
-    room = []
-    session = []
-    for m in show_data:
-        room.append(m.site)
-        session.append(m.time)
-
-    m_sessions = pd.DataFrame({"room": room, "session": session})
+    m_sessions = [{"room": data.site, "session": data.time} for data in show_data]
+    m_sessions = pd.DataFrame(m_sessions)
 
     session_data = m_sessions.to_dict(orient="records")
 
