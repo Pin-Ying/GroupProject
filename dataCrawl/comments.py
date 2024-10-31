@@ -1,5 +1,5 @@
 # from .models import movie
-from user.models import Review, Movie
+from user.models import Review, Movie, User
 import pandas as pd
 import time
 from bs4 import BeautifulSoup
@@ -59,6 +59,7 @@ def import_reviews():
         except movie_data.DoesNotExist:
             print(f"電影 '{row['電影名稱']}' 在數據庫中不存在，跳過該排片。")
             continue  # 如果電影不存在，跳過當前行
+        user = User.objects.get(name="Linemovie_comment")
         review, created = Review.objects.get_or_create(
-            movie=movie_data, content=row["評論"]
+            movie=movie_data, content=row["評論"], user=user
         )
