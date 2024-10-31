@@ -27,7 +27,13 @@
 {% block content %}
 <div class="columns is-vcentered">
     <div class="movie-poster column">
-        <img src="{{movie.img_src}}" alt="尚無圖片" />
+        {% if youtube_url|length > 10 %}
+        <a href="{{ youtube_url }}" target="_blank">
+            <img src="{{ movie.img_src }}" alt="尚無圖片" />
+        </a>
+        {% else %}
+        <img src="{{ movie.img_src }}" alt="尚無圖片" />
+        {% endif %}
     </div>
     <div class="movie-details column is-flex-direction-column">
         <div class="content is-large is-align-items-start">{{ movie.info }}</div>

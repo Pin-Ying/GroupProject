@@ -60,6 +60,7 @@ def movieInfo(request, movieID):
         print(username)
     # import_reviews_from_csv()
     movie_data = movie.objects.get(id=movieID)
+    youtube_url = movie_data.trailer_link or ""
     user_movie_data=user_movie.objects.get(title=movie_data.title)
     show_data = showTimeInfo.objects.filter(movie=movieID)
     theater_data = theater.objects.all()
@@ -91,7 +92,8 @@ def movieInfo(request, movieID):
             "showInfo": show_data,
             "random_comment": random_comment,
             "movie_Comment": list(sorted_comments),
-            'username':username
+            'username':username,
+            "youtube_url":youtube_url,
             
         },
     )
