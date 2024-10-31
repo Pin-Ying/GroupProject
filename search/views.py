@@ -58,7 +58,7 @@ def searchRequest(
         ### 資料庫讀取全部資料
         # 從電影資料查詢(電影標題、選擇螢幕)
         datas, upcoming_datas = "", ""
-        movie_datas = movie.objects.filter(release_date__lt=today)
+        movie_datas = movie.objects.filter(release_date__lte=today)
         if "recommended_movie" in request.session:
             recommended_movie = request.session["recommended_movie"]
             del request.session["recommended_movie"]

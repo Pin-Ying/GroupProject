@@ -31,15 +31,6 @@
 <form action="" method="post">
     {% csrf_token %}
     <div class="columns" id="search-area">
-        <!-- <thead>
-            <tr>
- 
-                <td>
-                    <input class="input" type="text" placeholder="輸入電影關鍵字" name="movieTitle"
-                        style="width: 90%; padding: 10px; font-size: 30px; border: 1px solid #ccc; border-radius: 5px;">
-                </td>
-            </tr>
-        </thead> -->
 
         <div class="column is-3">
             <div class="title is-5">選擇螢幕(Imax, 3D)</div>
@@ -145,7 +136,7 @@
             {% endif %}
             <div class="movie-info">
                 <p class="title is-4">{{ movie.title }}</p>
-                <p class="scrollable-content">{{ movie.info }}</p>
+                <!-- <p class="scrollable-content">{{ movie.info }}</p> -->
             </div>
         </div>
         {% endfor %}

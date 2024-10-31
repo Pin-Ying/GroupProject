@@ -53,13 +53,12 @@ def import_reviews():
             data["評論"].append(j)
 
     df = pd.DataFrame(data)
+    user = User.objects.get(name="LineMoviesComments")
     for index, row in df.iterrows():
         try:
             movie_data = Movie.objects.get(title=row["電影名稱"])
         except movie_data.DoesNotExist:
             print(f"電影 '{row['電影名稱']}' 在數據庫中不存在，跳過該排片。")
             continue  # 如果電影不存在，跳過當前行
-        user = User.objects.get(name="Linemovie_comment")
-        review, created = Review.objects.get_or_create(
-            movie=movie_data, content=row["評論"], user=user
+        review, created = Review.objects.get_or_create(user=user,movie=movie_data, content=row["評論"]
         )
