@@ -6,6 +6,7 @@ Created on Sat Oct 19 19:05:17 2024
 """
 
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
@@ -20,13 +21,16 @@ from datetime import datetime
 
 def setup_driver():
     chrome_options = Options()
-    # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     chrome_options.add_argument("--headless") #無頭模式
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
-    chrome_service = Service(os.environ.get("CHROMEDRIVER_PATH"))
-    return webdriver.Chrome(service=chrome_service,options=chrome_options)
+    # chrome_service = Service(os.environ.get("CHROMEDRIVER_PATH"))
+    
+    driver=webdriver.Chrome(options=chrome_options)
+    # driver=webdriver.Chrome(service=chrome_service,options=chrome_options)
+    return driver
 
 def verify_CAPTCHA(driver): # 驗證我不是機器人，只要失敗就 refresh 網頁並重新驗證
     try:
@@ -51,6 +55,7 @@ def miramarSeat(theater_name,movie_name,movie_date,movie_room,movie_session):
     movie_date = movie_date.strftime('%m月%d日 星期') + ["一", "二", "三", "四", "五", "六", "日"][movie_date.weekday()]
 
     try:
+        driver=setup_driver()
     
         for i,m_session in zip(range(len(movie_session)),movie_session):
 
@@ -63,8 +68,6 @@ def miramarSeat(theater_name,movie_name,movie_date,movie_room,movie_session):
             if i == 0:
                 login_addr = "Member/Login"
                 main_page = "https://www.miramarcinemas.tw/"
-
-                driver = setup_driver()
                 ############################# 起始斷頭模式動態網頁方式，並取得網頁資料 #############################
                 # options = webdriver.ChromeOptions()
                 # options.add_argument("--headless")
@@ -152,15 +155,22 @@ def miramarSeat(theater_name,movie_name,movie_date,movie_room,movie_session):
         if movie_session != [""]:
             driver.quit()        
         return emptySeat, bookedSeat, seatImage
+    except TimeoutException as e:
+        print("於WebDriverWait的步驟中發生了TimeoutException")
+        print(str(e))
+        return "暫無資料","暫無資料","暫無資料"
     finally:
         driver.quit()
 
 def showtimeSeat(theater_name,movie_name,movie_date,movie_room,movie_session):
     emptySeat = []
     bookedSeat = []
-    movie_date = movie_date.strftime('%m月%d日')
+    # movie_date = movie_date.strftime('%m月%d日') ### 發現抓取日期時會因為月份或日期的前導0而出錯，網頁本身沒有0
+    movie_date = f"{movie_date.month}月{movie_date.day}日"
+    # print(movie_date)
 
     try:
+        driver=setup_driver()
     
         for z,m_room,m_session in zip(range(len(movie_session)),movie_room,movie_session):    
 
@@ -174,10 +184,7 @@ def showtimeSeat(theater_name,movie_name,movie_date,movie_room,movie_session):
 
             if z == 0:
                 main_page = "https://www.showtimes.com.tw/"
-                choose_addr = "programs/"
-
-                driver = setup_driver()
-                
+                choose_addr = "programs/"                
                 ############################# 起始斷頭模式動態網頁方式，並取得網頁資料 #############################
                 # chrome_options = Options()
                 # chrome_options.add_argument("--headless") #無頭模式
@@ -204,6 +211,7 @@ def showtimeSeat(theater_name,movie_name,movie_date,movie_room,movie_session):
             sel_btn_d = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, f"//span[contains(text(), '{movie_date}')]")))
             driver.execute_script("arguments[0].click();", sel_btn_d)
             # 選場次
+            
             sel_btn_s = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, f"//div[contains(normalize-space(), '{m_room}')]/following-sibling::div//button[contains(text(), '{m_session}')]")))
             driver.execute_script("arguments[0].click();", sel_btn_s)
             
@@ -269,6 +277,10 @@ def showtimeSeat(theater_name,movie_name,movie_date,movie_room,movie_session):
         if movie_session != [""]:
             driver.quit()
         return emptySeat, bookedSeat, seatImage
+    except TimeoutException as  e:
+        print("於WebDriverWait的步驟中發生了TimeoutException")
+        print(str(e))
+        return "暫無資料","暫無資料","暫無資料"
     finally:
         driver.quit()
 
@@ -281,3 +293,7 @@ def findSeats(theater_name,movie_name,movie_date,movie_room,movie_session):
     else:
         return '暫無資料','暫無資料','暫無資料'
     return emptySeat, bookedSeat, seatImage
+
+if __name__=="__main__":
+    select_day = datetime.strptime('2024-11-02', "%Y-%m-%d").date()
+    print(findSeats('台中站前秀泰','劇場總集篇 孤獨搖滾！Re:Re:',select_day,['台中站前秀泰2館17廳'],['11:30']))

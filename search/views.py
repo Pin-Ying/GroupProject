@@ -149,7 +149,7 @@ def seats(request):
     selected_session = []
     movie_title = ""
     theater_name = ""
-    select_day = ""
+    select_day = request.session["select_day"] if "select_day" in request.session else ""
     seatImage = ""
     msg = ""
 
@@ -184,7 +184,7 @@ def seats(request):
                     selected_room,
                     selected_session,
                 )
-                msg = "暫無資料" if emptySeat == "暫無資料" else msg
+                msg = "不好意思，該場次暫無座位資料" if emptySeat == "暫無資料" else msg
 
     except Exception as e:
         msg = "載入過程出現錯誤"
