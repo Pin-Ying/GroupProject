@@ -227,3 +227,7 @@ def seats(request):
     }
 
     return render(request, "search/ordering.html", context)
+
+
+def home(request):
+    return render(request, "home.html")
