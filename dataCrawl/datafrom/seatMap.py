@@ -11,7 +11,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from io import BytesIO
@@ -284,12 +285,273 @@ def showtimeSeat(theater_name,movie_name,movie_date,movie_room,movie_session):
     finally:
         driver.quit()
 
+def ambassadorSeat(theater_name,movie_name,movie_date,movie_room,movie_session):
+    
+    theaterDic = {"國賓大戲院":"國賓大戲院　　　　　　　　TEL:(02)2361-1223","台北長春國賓影城":"台北長春國賓影城　　　　　TEL:(02)2515-5755",
+                  "新莊晶冠國賓影城":"新莊晶冠國賓影城　　　　　TEL:(02)8521-6517","林口昕境國賓影城":"林口昕境國賓影城　　　　　TEL:(02)2608-0011",
+                  "淡水禮萊國賓影城　":"淡水禮萊國賓影城　　　　　TEL:(02)2626-0707","八德置地國賓影城":"八德置地國賓影城　　　　　TEL:(03)218-2898",
+                  "台中忠孝國賓影城":"台中忠孝國賓影城　　　　　TEL:(04)2285-0768","台南國賓影城":"台南國賓影城　　　　　　　TEL:(06) 234-7166",
+                  "高雄義大國賓影城":"高雄義大國賓影城　　　　　TEL:(07) 656-8368","高雄SKM Park國賓影城":"高雄SKM Park國賓影城　　 TEL:(07) 793-3611",
+                  "屏東環球國賓影城":"屏東環球國賓影城　　　　　TEL:(08) 766-2128","金門昇恆昌國賓影城":"金門昇恆昌國賓影城　　　　TEL:(082)330-287",
+                  }
+
+    movie_date = movie_date.strftime('%Y/%m/%d')   
+    theater_name = theaterDic[theater_name]
+    
+    try:
+        if len(movie_session) == 1:
+            
+            movie_session = movie_session[0]
+            
+            main_page = "https://booking.ambassador.com.tw/"
+            idnum = "F123303359"
+            pwd = "a1s2d3987"
+        
+            driver = setup_driver()
+
+            ############################# 起始斷頭模式動態網頁方式，並取得網頁資料 #############################
+            # options = webdriver.ChromeOptions()
+            # options.add_argument("--headless")
+            # driver = webdriver.Chrome(options=options)
+            # driver = webdriver.Chrome() # 非斷頭模式
+            driver.maximize_window()
+            ############################################ 會員登入 ############################################
+            driver.get(main_page)
+            
+            # close_btn = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.ID, "bot1-Msg1"))) # 關閉警告顯示範圍太小的彈出視窗
+            # close_btn.click() ############################################################################ 關閉警告顯示範圍太小的彈出視窗
+            
+            username = driver.find_element(By.NAME,"account")
+            username.send_keys(idnum)
+            pw = driver.find_element(By.NAME,"password")
+            pw.send_keys(pwd)
+            agree_ckbox = driver.find_element(By.ID, "chkAgreeConfirm")
+            driver.execute_script("arguments[0].click();", agree_ckbox)
+            login_btn = driver.find_element(By.ID,"butSignIn")
+            login_btn.click()
+            
+            ########################################### 進入訂票頁 ###########################################
+            # close_btn = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.ID, "bot1-Msg1"))) # 關閉警告顯示範圍太小的彈出視窗
+            # close_btn.click() ############################################################################ 關閉警告顯示範圍太小的彈出視窗
+            startOrder_btn = driver.find_element(By.ID,"butStartBooking")
+            startOrder_btn.click()
+            ########################################### 進入座位表 ###########################################
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID,"selTheatreName")))
+            cinema = Select(driver.find_element(By.ID,"selTheatreName"))
+            cinema.select_by_visible_text(theater_name)
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID,"selMovieName")))
+            movie = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, f"//select[@id='selMovieName']/option[contains(text(), '{movie_name}')]")))
+            movie.click()
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID,"txtScreeningDate")))
+            date = driver.find_element(By.ID,"txtScreeningDate")
+            date.send_keys(movie_date)
+            date.send_keys(Keys.ENTER)
+            ##### 讓跳出的日期表消失 #####
+            temp = driver.find_element(By.CLASS_NAME,"navbar-brand_2")
+            actions = ActionChains(driver)
+            actions.move_to_element(temp).click().perform()
+            ############################
+            sessions = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#tabScreeningDetail td")))
+            for i,t in zip(range(len(sessions)),sessions): # 尋找有 movie_session 時間的場次
+                if t.text == movie_session:
+                    t.click()
+                    break
+            
+            slctck = driver.find_element(By.ID,"btnSelectTickets") # 按下 [選擇票種張數] 按鈕
+            slctck.click()
+            
+            close_btn = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.ID, "bot2-Msg1"))) # 在彈出視窗點擊 [OK] 進入選票種與張數畫面
+            close_btn.click() ############################################################################ 在彈出視窗點擊 [OK] 進入選票種與張數畫面
+            
+            # payment_btn = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID,"radPaymentKind_Cash"))) # 無論怎麼改，WebDriverWait都無法找到 radPaymentKind_Cash
+            time.sleep(1)
+            payment_btn = driver.find_element(By.ID,"radPaymentKind_Cash") 
+            driver.execute_script("arguments[0].click();", payment_btn)
+            close_btn = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "bot1-Msg1"))) # 在彈出視窗點擊 [OK] 進入選票種與張數畫面
+            close_btn.click() ############################################################################ 在彈出視窗點擊 [OK] 進入選票種與張數畫面
+            
+            # 選擇訂票張數
+            time.sleep(2)
+            tckt_prt = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//select[contains(@onchange, 'bookingTicketQuantityChanged')]")))
+            tckt = Select(tckt_prt)
+            tckt.select_by_value("1")    
+            
+            # 按下選位按鈕
+            strt_seat = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.ID, "btnSelectSeats")))
+            strt_seat.click()
+            
+            
+            ########################################### 座位表區截圖 ###########################################
+            time.sleep(3)
+            seat_map = driver.find_element(By.ID,'HUDContainer')
+            driver.execute_script("arguments[0].scrollIntoView(true);",seat_map)
+            time.sleep(0.5)
+            # 使用 selenium 的 get_screenshot_as_png 獲取圖的二進位數據
+            image_data = seat_map.screenshot_as_png  # 這將返回 PNG 格式的二進位數據
+            # 使用 BytesIO 將截圖的二進位數據儲存至RAM
+            image_stream = BytesIO(image_data)
+            image_stream.seek(0)
+            # 使用 PIL 打開RAM中的圖
+            image = Image.open(image_stream)
+            # 將圖轉換為 base64 格式
+            buffered = BytesIO()
+            image.save(buffered, format="PNG")
+            seatImage = "data:image/png;base64," + base64.b64encode(buffered.getvalue()).decode('utf-8')
+        
+            driver.quit()
+        
+            emptySeat = [""]
+            bookedSeat = [""]
+            
+        else:
+            emptySeat = []
+            bookedSeat = []
+            
+            for i in range(len(movie_session)):
+                emptySeat.append("")
+                bookedSeat.append("")
+                seatImage = ""
+
+        return emptySeat, bookedSeat, seatImage
+    
+    except TimeoutException as e:
+        print("於WebDriverWait的步驟中發生了TimeoutException")
+        print(str(e))
+        return "暫無資料","暫無資料","暫無資料"
+    
+    finally:
+        driver.quit()
+
+def vieshowSeat(theater_name,movie_name,movie_date,movie_room,movie_session):
+    emptySeat = []
+    bookedSeat = []
+    movie_date = movie_date.strftime('%Y/%m/%d') + ["(一)", "(二)", "(三)", "(四)", "(五)", "(六)", "(日)"][movie_date.weekday()]
+    if movie_session == []:
+        emptySeat = ""
+        bookedSeat = ""
+        seatImage = ""
+
+    try:
+        for z,m_session in zip(range(len(movie_session)),movie_session):
+            main_page = "https://www.vscinemas.com.tw/"
+            choose_addr = "vsweb/"
+            
+            if z == 0:
+
+                driver = setup_driver()
+                ############################# 起始斷頭模式動態網頁方式，並取得網頁資料 #############################
+                # options = webdriver.ChromeOptions()
+                # options.add_argument("--headless")
+                # driver = webdriver.Chrome(options=options)
+                # driver = webdriver.Chrome() # 非斷頭模式
+                driver.get(main_page+choose_addr)
+            
+            ########################################### 進入座位表 ###########################################
+            # 等待並選擇影城
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME,"cinema")))
+            cinema = Select(driver.find_element(By.NAME,"cinema"))
+            cinema.select_by_visible_text(theater_name)
+            # 等待並選擇電影
+            # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME,"movie")))
+            WebDriverWait(driver, 10).until(lambda d: len(d.find_elements(By.XPATH, "//select[@name='movie']/option")) > 1)
+            r = driver.page_source
+            soop = BeautifulSoup(r,"html.parser")
+            movie_select = soop.find("select", {"name": "movie"})
+            movies = movie_select.find_all("option")
+            time.sleep(1)
+            for i in range(1,len(movies)):
+                j = movies[i].text
+                print(i)
+                print(j)
+                if movie_name in j:
+                    movie = Select(driver.find_element(By.NAME,"movie"))
+                    movie.select_by_visible_text(j)
+                    # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME,"date")))
+                    WebDriverWait(driver, 10).until(lambda d: len(d.find_elements(By.XPATH, "//select[@name='date']/option")) > 1)
+                    try:
+                        date = Select(driver.find_element(By.NAME,"date"))
+                        time.sleep(1)
+                        date.select_by_visible_text(movie_date)
+                    except:
+                        continue
+                    # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME,"session")))
+                    WebDriverWait(driver, 10).until(lambda d: len(d.find_elements(By.XPATH, "//select[@name='session']/option")) > 1)
+                    try:
+                        session = Select(driver.find_element(By.NAME,"session"))
+                        time.sleep(1)
+                        session.select_by_visible_text(m_session)
+                    except:
+                        continue
+                    else:
+                        break
+                    
+            seat_btn = driver.find_element(By.ID,"SessionSeats")
+            seat_btn.click()
+        
+            ########################################## 切換座位表區塊 ##########################################
+            all_pages = driver.window_handles
+            driver.switch_to.window(all_pages[z+1])
+            ############################################ 讀取座位表 ############################################
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME,"DivSeat")))
+            r_seats= driver.page_source
+            soop = BeautifulSoup(r_seats,"html.parser")
+            table = soop.select("div.DivSeat > div") # 包含所有座位的：座位狀態、座位號、排號(第幾排)
+            
+            eSeat = 0
+            bSeat = 0
+            
+            for i in table:
+                if "label-info" in i.get("class"):
+                    eSeat += 1
+                elif "label-danger" in i.get("class"):
+                    bSeat += 1
+    
+            emptySeat.append(eSeat)
+            bookedSeat.append(bSeat)
+    
+            if len(movie_session) == 1:
+                ########################################### 座位表區截圖 ###########################################
+                seat_map = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "GridViewSessionSeats")))
+                driver.execute_script("arguments[0].scrollIntoView(true);",seat_map) # 滾動座位圖到頂端，以利完整截圖
+                # 使用 selenium 的 get_screenshot_as_png 獲取圖的二進位數據
+                image_data = seat_map.screenshot_as_png  # 這將返回 PNG 格式的二進位數據
+                # 使用 BytesIO 將截圖的二進位數據儲存至RAM
+                image_stream = BytesIO(image_data)
+                image_stream.seek(0)
+                # 使用 PIL 打開RAM中的圖
+                image = Image.open(image_stream)
+                # 將圖轉換為 base64 格式
+                buffered = BytesIO()
+                image.save(buffered, format="PNG")
+                seatImage = "data:image/png;base64," + base64.b64encode(buffered.getvalue()).decode('utf-8')
+            else:
+                seatImage = ""
+            
+            driver.switch_to.window(all_pages[0])
+    
+            
+        if movie_session != []:
+            driver.quit()        
+        return emptySeat, bookedSeat, seatImage
+    
+    except TimeoutException as e:
+        print("於WebDriverWait的步驟中發生了TimeoutException")
+        print(str(e))
+        return "暫無資料","暫無資料","暫無資料"
+
+    except:
+        driver.quit()
+
 
 def findSeats(theater_name,movie_name,movie_date,movie_room,movie_session):
     if "秀泰" in theater_name:
         emptySeat, bookedSeat, seatImage = showtimeSeat(theater_name,movie_name,movie_date,movie_room,movie_session)
     elif "美麗華" in theater_name:
         emptySeat, bookedSeat, seatImage = miramarSeat(theater_name,movie_name,movie_date,movie_room,movie_session)
+    elif "國賓" in theater_name:
+        emptySeat, bookedSeat, seatImage = ambassadorSeat(theater_name,movie_name,movie_date,movie_room,movie_session)
+    elif "威秀" in theater_name:
+        emptySeat, bookedSeat, seatImage = vieshowSeat(theater_name,movie_name,movie_date,movie_room,movie_session)
     else:
         return '暫無資料','暫無資料','暫無資料'
     return emptySeat, bookedSeat, seatImage
