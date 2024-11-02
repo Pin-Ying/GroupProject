@@ -17,6 +17,8 @@ from dataCrawl.datafrom.seatMap import findSeats
 # Create your views here.
 today = datetime.today()
 today = timezone.make_aware(today)
+now=today.time()
+now=timezone.make_aware(now)
 today_text = today.strftime("%m月%d日")
 dayStart = today.strftime("%Y-%m-%d")
 # dayEnd=today + timedelta(days=7)
@@ -147,8 +149,8 @@ def seats(request):
     username = request.session["username"] if "username" in request.session else None
     selected_room = []
     selected_session = []
-    movie_title = ""
-    theater_name = ""
+    movie_title = request.session["movie_title"] if "movie_title" in request.session else ""
+    theater_name = request.session["theater_name"] if "theater_name" in request.session else ""
     select_day = request.session["select_day"] if "select_day" in request.session else ""
     seatImage = ""
     msg = ""
@@ -170,6 +172,7 @@ def seats(request):
                 select_day = request.POST["select_day"]
                 print(select_day)
                 select_day = datetime.strptime(select_day, "%Y年%m月%d日").date()
+                request.session["select_day"] = select_day.strftime("%Y-%m-%d")
                 print("select_day:", select_day.strftime("%Y-%m-%d"))
 
             elif "room" in request.POST and "session" in request.POST:
@@ -208,6 +211,9 @@ def seats(request):
     print("場次：", selected_session)  # debug
 
     m_sessions = [{"room": data.site, "session": data.time} for data in show_data]
+    if select_day==today.date():
+        m_sessions = [{"room": data.site, "session": data.time} for data in show_data if datetime.strptime(data.time,'%H:%S').time()>now]
+
     m_sessions = pd.DataFrame(m_sessions)
 
     session_data = m_sessions.to_dict(orient="records")
