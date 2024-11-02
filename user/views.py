@@ -157,7 +157,6 @@ def verificationok(request):
                 user.verificationok = True
                 user.save()
                 request.session["msg"] = "驗證成功！"
-                return render(request, "user/restar.html")
             else:
                 request.session["msg"] = "驗證過程出現錯誤"
     return redirect("search_index")
