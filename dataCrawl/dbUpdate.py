@@ -54,16 +54,22 @@ def movieUpdate(datas):
     movie_titles = [movie["title"] for movie in list(movie.objects.values("title"))]
     for data in datas:
         print(data["電影名稱"], "uploading...")
+        try:
         ### 剛好遇到神奇字元所以replace...
-        title = data["電影名稱"].replace("／", "/")
-        img_src = data["電影海報網址"][:100]
-        trailer_link = data["電影預告網址"][:100]
-        movie_type = data["影片類型"][:100]
-        main_actor = data["主要演員"][:100]
-        info = data["電影介紹"][:500]
-        release_date = data["上或待上映"][:100]
-        running_time = data["電影時長"][:100]
-        screen_type = data["電影螢幕"]
+            title = data["電影名稱"].replace("／", "/")
+            img_src = data["電影海報網址"][:100]
+            trailer_link = data["電影預告網址"][:100]
+            movie_type = data["影片類型"][:100]
+            main_actor = data["主要演員"][:100]
+            info = data["電影介紹"][:500]
+            release_date = data["上或待上映"][:100] if data["上或待上映"]!='未知' else None
+            if '/' in release_date:
+                release_date=release_date.replace('/','-')
+            running_time = data["電影時長"][:100]
+            screen_type = data["電影螢幕"]
+        except:
+            print(title, "輸入格式出現錯誤")
+            continue
         if title in movie_titles or title in [movie.title for movie in moviesData]:
             print(title, "already existed.")
             continue
