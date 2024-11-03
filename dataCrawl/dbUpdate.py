@@ -63,7 +63,7 @@ def movieUpdate(datas):
         info = data["電影介紹"][:500]
         release_date = data["上或待上映"][:100]
         running_time = data["電影時長"][:100]
-        screen_type = data["電影螢幕"][:100]
+        screen_type = data["電影螢幕"]
         if title in movie_titles or title in [movie.title for movie in moviesData]:
             print(title, "already existed.")
             continue

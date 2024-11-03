@@ -6,7 +6,7 @@ python manage.py upload_database --model shows
 
 python manage.py upload_database --model comments
 
-git add .
+git add db.sqlite3
 
 git commit -m "auto upload_database."
 
