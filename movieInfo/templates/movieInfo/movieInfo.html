@@ -26,6 +26,11 @@
         margin: 0 0 24px;
         padding: 5px;
     }
+
+    .scrollable-content {
+        height: 150px;
+        padding: 5px;
+    }
 </style>
 {% endblock %}
 {% block content %}
@@ -59,7 +64,7 @@
     <div class="movie-info-com columns is-multiline">
 
         {% for Comment in movie_Comment %}
-        <div class="comment content column is-2">{{ Comment }}</div>
+        <div class="comment scrollable-content column is-2">{{ Comment }}</div>
         {% endfor %}
 
         <!-- 新增評論輸入框與送出按鈕 -->
