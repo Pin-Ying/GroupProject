@@ -19,7 +19,7 @@
 
     .movie-img {
         min-height: 500px;
-        height: 500px;
+        max-height: 500px;
         background-color: black;
     }
 
@@ -117,12 +117,14 @@
                     {% csrf_token %}
                     <input type="hidden" name="movie_title" value="{{movie.title}}">
                     <input type="hidden" name="select_day" value="{{select_day}}">
-                    <select class="select is-medium" id="theater" name="theater">
+
+                    <select class="select is-medium" style="width: 50%;" id="theater" name="theater">
                         {% for theater in movie.theaters %}
                         <option value="{{ theater }}">{{ theater }}</option>
                         {% endfor %}
                     </select>
-                    <button class="button is-medium is-info" type="submit">搜尋</button>
+                    <button class="is-2 button is-medium is-info" type="submit">搜尋</button>
+
                 </form>
 
             </div>
