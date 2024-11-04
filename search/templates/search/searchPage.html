@@ -8,6 +8,11 @@
         text-decoration: none;
     }
 
+    #toggle-button {
+        background-color: rgb(45, 10, 5);
+        border-color: rgb(165, 115, 40);
+    }
+
     .poster {
         border-radius: 5px;
     }
@@ -22,6 +27,16 @@
         height: 300px;
         margin: 5px;
     }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        background-color: rgb(0, 180, 255);
+        margin: 6px;
+    }
+
+    .checkbox {
+        font-size: large;
+        margin: 5px;
+    }
 </style>
 {% endblock %}
 {% block script %}
@@ -30,22 +45,20 @@
 {% block content %}
 <form action="" method="post">
     {% csrf_token %}
-    <div class="columns" id="search-area">
+    <div class="columns is-vcentered" id="search-area">
 
         <div class="column is-3">
-            <div class="title is-5">選擇螢幕(Imax, 3D)</div>
-            <input type="checkbox" id="Imax" name="Imax">
-            <label for="Imax">Imax</label>
-            <input type="checkbox" id="3D" name="3D">
-            <label for="3D">3D</label>
+            <div class="title is-5" style="background-color: rgb(75, 80, 110);">選擇螢幕(Imax, 3D)</div>
+            <label class="checkbox" for="Imax"><input type="checkbox" id="Imax" name="Imax">Imax</label>
+            <label class="checkbox" for="3D"><input type="checkbox" id="3D" name="3D">3D</label>
         </div>
         <div class="column">
-            <input type="button" class="button" id="toggle-button" value="顯示即將上映">
+            <input type="button" class="button search-func has-text-warning" id="toggle-button" value="顯示即將上映">
         </div>
         <div class="column">
             <div class="control">
-                <div class="select">
-                    <select id="area" name="area">
+                <div class="select is-info">
+                    <select id="area" name="area" class="has-text-info">
                         <option value="">選擇地區</option>
                         <option value="north">北部</option>
                         <option value="central">中部</option>
@@ -56,8 +69,8 @@
         </div>
         <div class="column">
             <div class="control">
-                <div class="select">
-                    <select id="cinema" name="cinema">
+                <div class="select is-info">
+                    <select id="cinema" name="cinema" class="has-text-info">
                         <option value="">選擇戲院</option>
                         {% for cinema in cinemas %}
                         <option value="{{cinema}}">{{cinema}}</option>
@@ -68,13 +81,14 @@
         </div>
         <div class="column">
             <div class="control">
-                <input class="input" type="date" name="date" min="{{dayStart}}" max="{{dayEnd}}" value="{{select_day}}">
+                <input class="input is-info" style="color: aqua;" type="date" name="date" min="{{dayStart}}"
+                    max="{{dayEnd}}" value="{{select_day}}">
             </div>
         </div>
 
         <div class="column is-5 field has-addons">
             <div class="control">
-                <input class="input" type="text" placeholder="輸入電影關鍵字" name="movieTitle">
+                <input class="input is-info" type="text" placeholder="輸入電影關鍵字" name="movieTitle">
             </div>
             <div class="control">
                 <button class="button is-info">搜尋</button>

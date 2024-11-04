@@ -6,8 +6,8 @@ from django.db import models
 class movie(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100, unique=True)
-    img_src = models.CharField(max_length=100, blank=True, null=True)
-    trailer_link = models.CharField(max_length=100, blank=True, null=True)
+    img_src = models.CharField(max_length=500, blank=True, null=True)
+    trailer_link = models.CharField(max_length=500, blank=True, null=True)
     movie_type = models.CharField(max_length=100, blank=True, null=True)
     main_actor = models.CharField(max_length=100, blank=True, null=True)
     info = models.CharField(max_length=500, blank=True, null=True)
