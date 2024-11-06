@@ -26,12 +26,12 @@ today=today.strftime("%Y-%m-%d")
 now=datetime.now().time()
 
 
-def movieSearch(df, searchDic, screens=["Imax", "3D", "數位"]):
+def movieSearch(df, searchDic, screens=["Imax", "3D"]):
 
     ### 針對螢幕篩選先重新建構字典
     searchDic["movieScreen"] = []
     for screen in screens:
-        if screen in searchDic.keys():
+        if screen in searchDic.values():
             searchDic["movieScreen"].append(screen)
             searchDic.pop(screen)
     if len(searchDic["movieScreen"]) == 0:

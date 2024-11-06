@@ -109,6 +109,7 @@ def searchRequest(
 
         search = request.POST
         searchDic = {key: search[key] for key in search if search[key] != ""}
+        print(searchDic)
 
         # datas = movieSearch(df=movie_df,searchDic=searchDic)
         datas, searchDic = movieSearch(df=df, searchDic=searchDic)

@@ -43,14 +43,14 @@
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 {% endblock %}
 {% block content %}
-<form action="" method="post">
+<form action="" method="post" id="search-form">
     {% csrf_token %}
     <div class="columns is-vcentered" id="search-area">
 
         <div class="column is-3">
             <div class="title is-5" style="background-color: rgb(75, 80, 110);">選擇螢幕(Imax, 3D)</div>
-            <label class="checkbox" for="Imax"><input type="checkbox" id="Imax" name="Imax">Imax</label>
-            <label class="checkbox" for="3D"><input type="checkbox" id="3D" name="3D">3D</label>
+            <label class="checkbox" for="Imax"><input type="checkbox" id="Imax" name="screen" value="Imax">Imax</label>
+            <label class="checkbox" for="3D"><input type="checkbox" id="3D" name="screen" value="3D">3D</label>
         </div>
         <div class="column">
             <input type="button" class="button search-func has-text-warning" id="toggle-button" value="顯示即將上映">
@@ -118,7 +118,7 @@
                     <input type="hidden" name="movie_title" value="{{movie.title}}">
                     <input type="hidden" name="select_day" value="{{select_day}}">
 
-                    <select class="select is-medium" style="width: 50%;" id="theater" name="theater">
+                    <select class="select is-medium" style="width: 50%;" name="theater">
                         {% for theater in movie.theaters %}
                         <option value="{{ theater }}">{{ theater }}</option>
                         {% endfor %}
@@ -185,15 +185,58 @@
 
     });
 
-    $(function () {
-        var len = 200; // 超過字數以"..."取代
-        $(".content").each(function (i) {
-            if ($(this).text().length > len) {
-                $(this).attr("title", $(this).text());
-                var text = $(this).text().substring(0, len - 1) + "...";
-                $(this).text(text);
+    // 保存查詢紀錄
+    // 當表單欄位變更時自動儲存資料
+    document.getElementById("search-form").addEventListener("input", function () {
+        const formData = new FormData(this);
+        const formObject = {};
+
+        formData.forEach((value, key) => {
+            if (key === 'screen') {
+                // 將選中的 checkbox 儲存為陣列
+                if (!formObject[key]) {
+                    formObject[key] = [];
+                }
+                formObject[key].push(value);
+            } else {
+                formObject[key] = value;
             }
         });
+
+        // 儲存表單資料為 JSON 格式
+        localStorage.setItem('userFormData', JSON.stringify(formObject));
+    });
+
+    // 預填表單資料
+    window.addEventListener("load", function () {
+        const savedData = JSON.parse(localStorage.getItem('userFormData'));
+
+        if (savedData) {
+            Object.keys(savedData).forEach((key) => {
+                const input = document.querySelector(`#search-form [name="${key}"]`);
+
+                if (input) {
+                    if (input.type === "checkbox") {
+                        // checkbox 類型
+                        if (Array.isArray(savedData[key])) {
+                            // 複數選項的 checkbox
+                            savedData[key].forEach(value => {
+                                const checkbox = document.querySelector(`#search-form [name="${key}"][value="${value}"]`);
+                                if (checkbox) {
+                                    checkbox.checked = true;
+                                }
+                            });
+                        } else {
+                            // 單一選項的 checkbox
+                            input.checked = savedData[key] === "on" || savedData[key] === true;
+                        }
+                    } else {
+                        // 其他類型的欄位直接回填
+                        input.value = savedData[key];
+                    }
+                }
+            });
+        }
     });
 </script>
 

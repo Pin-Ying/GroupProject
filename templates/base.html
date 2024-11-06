@@ -77,16 +77,6 @@
         {% endif %}
     </div>
     <div>{{msg}}</div>
-    <script>
-        sessionStorage.setItem('username', 'JohnDoe');
-        const username = sessionStorage.getItem('username');
-
-        if (username) {
-            console.log('Username 資料存在:', username);
-        } else {
-            console.log('Username 資料不存在。');
-        }
-    </script>
     {% block content %}
 
     {% endblock %}
