@@ -1,6 +1,6 @@
 import pandas as pd
 from bs4 import BeautifulSoup
-import time, random, os
+import time, random, os, re
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -20,7 +20,7 @@ data = pd.DataFrame()
 def setup_driver():
     chrome_options = Options()
     # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    chrome_options.add_argument("--headless")  # 無頭模式
+    # chrome_options.add_argument("--headless")  # 無頭模式
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
@@ -63,6 +63,7 @@ def scrape_one_movies(i, total_movies):
             )
         )
         movie_data["電影名稱"] = title.text
+        print(f"第 {i+1} 部電影名稱: ",movie_data["電影名稱"])
 
         # 電影類型
         try:
@@ -143,7 +144,7 @@ def scrape_all_movies():
         # 遍歷每個電影連結
         running = 0
         for i in range(total_movies):
-            if running >= 3:
+            if running >= 5:
                 for thread in threads[i - running : i]:
                     thread.join()
                     running = 0
@@ -197,28 +198,39 @@ def scrape_one_info(i, total_movies):
         print(f"正在處理第 {i+1}/{total_movies} 部電影")
         movie_links[i].click()
         time.sleep(3)
-
-        element = WebDriverWait(driver, 15).until(
-            EC.text_to_be_present_in_element((By.CLASS_NAME, "sc-ihgnxF"), "選取影城")
+        WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div/div[4]/div/div/div[2]/div[1]'))
         )
         title_element = driver.find_element(
             By.XPATH, '//*[@id="app"]/div/div[4]/div/div/div[2]/div[1]'
         )
         title = title_element.text
-
-        cinemas = driver.find_elements(By.CLASS_NAME, "sc-iGgWBj")
+        print(print(f"第 {i+1}/{total_movies} 部電影名稱: ",title))
+        
+        try:
+            WebDriverWait(driver, 15).until(
+            EC.text_to_be_present_in_element((By.CLASS_NAME, "sc-ihgnxF"), "選取影城")
+        )
+            cinemas = driver.find_elements(By.CLASS_NAME, "sc-iGgWBj")
+        except Exception as e:
+            cinemas = ['None']
+            print('找尋影城出錯，繼續嘗試後續程式碼: ',str(e))
 
         for cinema in cinemas:
             try:
-                WebDriverWait(driver, 10).until(
-                    EC.visibility_of_element_located((By.CLASS_NAME, "sc-iGgWBj"))
-                )
-                driver.execute_script("arguments[0].scrollIntoView(true);", cinema)
-                cinema_name = cinema.text
-                if cinema_name == "更多…":
-                    continue
+                if cinema!='None':
+                    WebDriverWait(driver, 10).until(
+                        EC.visibility_of_element_located((By.CLASS_NAME, "sc-iGgWBj"))
+                    )
+                    driver.execute_script("arguments[0].scrollIntoView(true);", cinema)
+                    cinema_name = cinema.text
+                    if cinema_name == "更多…":
+                        continue
 
-                driver.execute_script("arguments[0].click();", cinema)
+                    driver.execute_script("arguments[0].click();", cinema)
+                else:
+                    print('cinema_name 暫定為 None')
+                    cinema_name=None
 
                 WebDriverWait(driver, 10).until(
                     EC.presence_of_element_located((By.CLASS_NAME, "sc-iMTnTL"))
@@ -244,7 +256,7 @@ def scrape_one_info(i, total_movies):
                         time_elements = driver.find_elements(By.CLASS_NAME, "sc-fvtFIe")
                         for hall, time_element in zip(hall_elements, time_elements):
                             hall_text = hall.text.split("\n")
-                            if len(hall_text) >= 3:
+                            if len(hall_text) >= 5:
                                 hall_info = (
                                     f"{hall_text[0]}{hall_text[1]}{hall_text[2]}"
                                 )
@@ -259,7 +271,7 @@ def scrape_one_info(i, total_movies):
                                     show_infos.append(
                                         {
                                             "電影名稱": title,
-                                            "影城": cinema_name,
+                                            "影城": cinema_name if cinema_name else re.split(r'\d+',hall_info)[0],
                                             "日期": date_text,
                                             "廳位席位": hall_info,
                                             "時間": single_time.strip("早優 "),
@@ -274,13 +286,14 @@ def scrape_one_info(i, total_movies):
                 print(
                     f"Error with cinema '{cinema_name if 'cinema_name' in locals() else 'Unknown'}': {e}"
                 )
-
+        print(f"第 {i+1}/{total_movies} 部電影 {title} 處理完成")
     except Exception as e:
         print(f"處理電影時發生錯誤: {str(e)}")
+        ### 目前已知會發生錯誤情況: 影城只有一個時，無點擊影城的按鈕 => 已修復
+        ### 無上映日期
 
     finally:
         driver.close()
-        print(i + 1, "處理完畢")
         return show_queue.put(show_infos)
 
 
@@ -306,7 +319,7 @@ def scrape_show_info():
         # 遍歷每個電影連結
         running = 0
         for i in range(total_movies):
-            if running >= 3:
+            if running >= 5:
                 for thread in threads[i - running : i]:
                     thread.join()
                     running = 0
@@ -377,4 +390,4 @@ def scrape_cinema_info(url="https://www.showtimes.com.tw/info/cinema"):
 
 
 if __name__ == "__main__":
-    print(scrape_all_movies())
+    print(scrape_show_info())
