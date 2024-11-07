@@ -20,7 +20,7 @@ data = pd.DataFrame()
 def setup_driver():
     chrome_options = Options()
     # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    # chrome_options.add_argument("--headless")  # 無頭模式
+    chrome_options.add_argument("--headless")  # 無頭模式
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
@@ -144,7 +144,7 @@ def scrape_all_movies():
         # 遍歷每個電影連結
         running = 0
         for i in range(total_movies):
-            if running >= 5:
+            if running >= 4:
                 for thread in threads[i - running : i]:
                     thread.join()
                     running = 0
@@ -319,7 +319,7 @@ def scrape_show_info():
         # 遍歷每個電影連結
         running = 0
         for i in range(total_movies):
-            if running >= 5:
+            if running >= 4:
                 for thread in threads[i - running : i]:
                     thread.join()
                     running = 0

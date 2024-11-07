@@ -18,7 +18,7 @@ def valid_data(your_objects,model):
         try:
             obj.full_clean()  # 驗證模型的所有約束
             model.objects.get_or_create(obj)
-            print(obj.title,"完成")
+            print(obj,"完成")
         except ValidationError as e:
             invalid_objects.append(obj)
             print(f"Validation failed for object: {obj}, Error: {e}")
@@ -173,9 +173,9 @@ def showUpdate(datas, is_limit=False):
             continue
 
     print("預計上傳筆數: ", len(showDatas))
-    invalid=valid_data(showDatas,showTimeInfo)
-    print("無效資料: ",invalid)
-    # showTimeInfo.objects.bulk_create(valid)
+    # invalid=valid_data(showDatas,showTimeInfo)
+    # print("無效資料: ",invalid)
+    showTimeInfo.objects.bulk_create(showDatas)
 
 
 ### 下方為與爬蟲功能連結
