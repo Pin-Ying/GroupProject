@@ -198,18 +198,20 @@
                     formObject[key] = [];
                 }
                 formObject[key].push(value);
+            } else if (key === "csrfmiddlewaretoken") {
+                return;
             } else {
                 formObject[key] = value;
             }
         });
 
         // 儲存表單資料為 JSON 格式
-        localStorage.setItem('userFormData', JSON.stringify(formObject));
+        sessionStorage.setItem('userFormData', JSON.stringify(formObject));
     });
 
     // 預填表單資料
     window.addEventListener("load", function () {
-        const savedData = JSON.parse(localStorage.getItem('userFormData'));
+        const savedData = JSON.parse(sessionStorage.getItem('userFormData'));
 
         if (savedData) {
             Object.keys(savedData).forEach((key) => {
@@ -238,6 +240,7 @@
             });
         }
     });
+
 </script>
 
 {% endblock %}
